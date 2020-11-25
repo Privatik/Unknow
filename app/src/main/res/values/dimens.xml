@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="time_size">9sp</dimen>
+    <dimen name="text_message_size">17sp</dimen>
+</resources>

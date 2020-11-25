@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scrollbars="none"
+    android:fillViewport="true"
+    android:background="@color/ebony_clay">
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/icon"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:src="@drawable/icon"
+        android:layout_marginBottom="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/login"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+
+    <EditText
+        android:id="@+id/login"
+        style="@style/editText"
+        android:layout_marginBottom="40dp"
+        android:hint="@string/login"
+        android:backgroundTint="@color/steel_gray"
+        android:inputType="textEmailAddress"
+        app:layout_constraintBottom_toTopOf="@+id/password"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/icon"/>
+
+    <EditText
+        android:id="@+id/password"
+        style="@style/editText"
+        android:hint="@string/password"
+        android:layout_marginBottom="50dp"
+        android:backgroundTint="@color/steel_gray"
+        android:inputType="textPassword"
+        app:layout_constraintBottom_toTopOf="@+id/register"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/login" />
+
+    <Button
+        android:id="@+id/register"
+        style="@style/button"
+        android:text="@string/register_now"
+        android:layout_width="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/login_in"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/password" />
+
+    <Button
+        android:id="@+id/login_in"
+        style="@style/button"
+        android:text="@string/login_in"
+        android:layout_width="wrap_content"
+        app:layout_constraintBaseline_toBaselineOf="@id/register"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/register" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

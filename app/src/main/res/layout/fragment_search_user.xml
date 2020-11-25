@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <import type="android.view.View"/>
+
+        <variable
+            name="viewmodel"
+            type="com.io.unknow.viewmodel.dialogfragment.SearchUserViewModel" />
+    </data>
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/search_dialog_background"
+        android:elevation="3dp">
+
+        <ProgressBar
+            android:id="@+id/loading_progress_bar"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_gravity="center"
+            android:layout_margin="50dp"
+            android:indeterminateOnly="true"
+            android:indeterminateDrawable="@drawable/progresbar_custom"
+            android:visibility="gone"
+            />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/info_search_user"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/sex"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/sex"
+            android:textColor="@color/dark_pink"
+            android:textSize="15sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/info" />
+
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onCheckedChanged="@{viewmodel::onSplitTypeChanged}"
+            android:orientation="horizontal"
+            android:theme="@style/MyRadioButton"
+            app:layout_constraintStart_toEndOf="@+id/sex"
+            app:layout_constraintTop_toBottomOf="@+id/sex">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/man"
+                android:textColor="@color/dark_pink"
+                android:textSize="20sp" />
+
+            <RadioButton
+                android:id="@+id/men"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginLeft="20dp"
+                android:text="@string/women"
+                android:textColor="@color/dark_pink"
+                android:textSize="20sp" />
+
+            <RadioButton
+                android:id="@+id/women"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginLeft="20dp"
+                android:text="@string/unknow"
+                android:textColor="@color/dark_pink"
+                android:textSize="20sp" />
+
+            <RadioButton
+                android:id="@+id/unknow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"/>
+
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/age"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/age_optional"
+            android:textColor="@color/dark_pink"
+            android:textSize="15sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+
+        <EditText
+            android:id="@+id/editAgeStart"
+            style="@style/editText"
+            android:layout_width="115dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="@color/steel_gray"
+            android:hint="@string/to"
+            android:inputType="number"
+            android:text='@{viewmodel.search.ageStart == null ? "" : viewmodel.search.ageStart}'
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/age" />
+
+        <EditText
+            android:id="@+id/editAgeEnd"
+            style="@style/editText"
+            android:layout_width="115dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="@color/steel_gray"
+            android:hint="@string/from"
+            android:inputType="number"
+            android:text='@{viewmodel.search.ageEnd == null ? "" : viewmodel.search.ageEnd}'
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@id/editAgeStart"
+            app:layout_constraintTop_toBottomOf="@+id/age" />
+
+        <TextView
+            android:id="@+id/height"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/height_optional"
+            android:textColor="@color/dark_pink"
+            android:textSize="15sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editAgeStart" />
+
+        <EditText
+            android:id="@+id/editHeightStart"
+            style="@style/editText"
+            android:layout_width="115dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="@color/steel_gray"
+            android:hint="@string/to"
+            android:inputType="number"
+            android:text='@{viewmodel.search.heightStart == null ? "" : viewmodel.search.heightStart}'
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/height" />
+
+        <EditText
+            android:id="@+id/editHeightEnd"
+            style="@style/editText"
+            android:layout_width="115dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="@color/steel_gray"
+            android:hint="@string/from"
+            android:inputType="number"
+            android:text='@{viewmodel.search.heightEnd == null ? "" : viewmodel.search.heightEnd}'
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@id/editAgeStart"
+            app:layout_constraintTop_toBottomOf="@+id/height" />
+
+        <TextView
+            android:id="@+id/weight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/weight_optional"
+            android:textColor="@color/dark_pink"
+            android:textSize="15sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editHeightStart" />
+
+        <EditText
+            android:id="@+id/editWeightStart"
+            style="@style/editText"
+            android:layout_width="115dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="@color/steel_gray"
+            android:hint="@string/to"
+            android:inputType="number"
+            android:text='@{viewmodel.search.weightStart == null ? "" : viewmodel.search.weightStart}'
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/weight" />
+
+        <EditText
+            android:id="@+id/editWeightEnd"
+            style="@style/editText"
+            android:layout_width="115dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="@color/steel_gray"
+            android:hint="@string/from"
+            android:inputType="number"
+            android:text='@{viewmodel.search.weightEnd == null ? "" : viewmodel.search.weightEnd}'
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@id/editAgeStart"
+            app:layout_constraintTop_toBottomOf="@+id/weight" />
+
+
+        <EditText
+            android:id="@+id/editLocal"
+            style="@style/editText"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="@color/steel_gray"
+            android:hint="@string/local_optional"
+            android:text='@{viewmodel.search.local == null ? "" : viewmodel.search.local}'
+            android:textSize="12sp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editWeightStart" />
+
+        <Button
+            android:id="@+id/search"
+            android:background="@drawable/background_button_normal"
+            android:padding="6dp"
+            android:textColor="@color/dark_pink"
+            android:textAllCaps="false"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/search"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editLocal" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
+    </layout>

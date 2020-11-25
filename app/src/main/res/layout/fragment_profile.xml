@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.fragment.ProfileFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/steel_gray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:elevation="3dp">
+
+        <TextView
+            android:id="@+id/id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/id"
+            android:textColor="@color/dark_pink"
+            android:textSize="17sp"/>
+
+    </Toolbar>
+
+<ScrollView
+    android:scrollbars="none"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@color/ebony_clay">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp">
+
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:src="@drawable/icon"
+            android:layout_marginTop="10dp"
+            android:elevation="5dp"
+            android:background="@color/steel_gray"
+            android:layout_gravity="center" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:elevation="3dp"
+            android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/sex_age"
+            android:textColor="@android:color/white"
+            android:padding="10dp"
+            android:background="@color/steel_gray"/>
+
+        <TextView
+            android:id="@+id/sex"
+            style="@style/MarginProfile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/sex"
+            android:background="@color/steel_gray"/>
+
+        <TextView
+            android:id="@+id/age"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/MarginProfile"
+            android:text="@string/age"
+            app:layout_constraintBottom_toTopOf="@id/height"
+            app:layout_constraintStart_toStartOf="@id/sex"
+            app:layout_constraintTop_toBottomOf="@+id/sex" />
+
+        </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:elevation="3dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/height_weight_local"
+            android:textColor="@android:color/white"
+            android:padding="10dp"
+            android:background="@color/steel_gray"
+            android:drawableEnd="@drawable/ic_create_24"/>
+
+        <TextView
+            android:id="@+id/height"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:text="@string/height"
+            style="@style/MarginProfile"
+            app:layout_constraintBottom_toTopOf="@id/weight"
+            app:layout_constraintStart_toStartOf="@id/age"
+            app:layout_constraintTop_toBottomOf="@+id/age" />
+
+        <TextView
+            android:id="@+id/weight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/weight"
+            style="@style/MarginProfile"
+            app:layout_constraintBottom_toTopOf="@id/local"
+            app:layout_constraintStart_toStartOf="@id/height"
+            app:layout_constraintTop_toBottomOf="@+id/height" />
+
+        <TextView
+            android:id="@+id/local"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/local"
+            style="@style/MarginProfile"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/weight"
+            app:layout_constraintTop_toBottomOf="@+id/weight" />
+
+    </LinearLayout>
+
+        <Button
+            android:id="@+id/exit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:background="@color/steel_gray"
+            android:textSize="20sp"
+            android:drawableStart="@drawable/ic_baseline_exit_to_app_24"
+            android:paddingStart="10dp"
+            android:drawablePadding="5dp"
+            android:gravity="start|center"
+            android:textAllCaps="false"
+            android:layout_marginBottom="10dp"
+            android:textColor="@color/dark_pink"
+            android:text="@string/exit"/>
+
+
+    </LinearLayout>
+</ScrollView>
+    </LinearLayout>
