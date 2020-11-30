@@ -10,8 +10,8 @@ class DialogWithUserViewModel : ViewModel() {
     val liveData = DialogWithUserLiveData()
     private lateinit var dialogWithUserModel: DialogWithUserModel
 
-    fun loadMessages(messageId: String){
-        dialogWithUserModel = DialogWithUserModel(liveData,messageId)
+    fun loadMessages(messageId: String, userId: String){
+        dialogWithUserModel = DialogWithUserModel(liveData,messageId, userId)
     }
 
     fun initAdapter(adapter: DialogAdapter){

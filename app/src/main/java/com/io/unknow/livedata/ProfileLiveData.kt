@@ -9,7 +9,7 @@ class ProfileLiveData: LiveData<User>() {
          val get:ProfileLiveData = ProfileLiveData()
     }
 
-    fun setUser(user: User) {
+    fun setUser(user: User?) {
         value = user
     }
 }

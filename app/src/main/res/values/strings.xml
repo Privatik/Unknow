@@ -25,10 +25,12 @@
     <string name="sex_age">Пол/Возраст</string>
     <string name="height_weight_local">Рост/Вес/Местоположение</string>
     <string name="exit">Выход</string>
-    <string name="id">Id:</string>
+    <string name="id">Id: </string>
     <string name="unknow">\?</string>
     <string name="info_search_user">Введи параметры собеседника</string>
     <string name="age_optional">Возраст:(необязательно)</string>
     <string name="from">До</string>
     <string name="to">От</string>
+    <string name="birthday">Дата рождения:</string>
+    <string name="save">Сохранить</string>
 </resources>

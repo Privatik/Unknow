@@ -5,6 +5,6 @@ import com.io.unknow.auth.TwoFieldModel
 import com.io.unknow.livedata.TwoFieldLiveData
 
 class TwoFieldViewModel: ViewModel() {
-    val liveData = TwoFieldLiveData()
+    val liveData = TwoFieldLiveData.get
     val model: TwoFieldModel = TwoFieldModel(liveData)
 }

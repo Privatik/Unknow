@@ -46,6 +46,14 @@ class AdapterChats(private val map: Map<String, Chat>,val fragment: Fragment) : 
                 messageId = chat.messages
                 this.userId = userId
             }
+
+            if (chat.last_message != null){
+                if (userId == chat.last_message?.userId)
+                    message.text = chat.last_message?.text
+                else{
+                    message.text = "Вы:  " +  chat.last_message?.text
+                }
+            }
         }
 
         override fun onClick(v: View?) {

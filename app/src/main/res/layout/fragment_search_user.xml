@@ -127,7 +127,7 @@
             android:backgroundTint="@color/steel_gray"
             android:hint="@string/to"
             android:inputType="number"
-            android:text='@{viewmodel.search.ageStart == null ? "" : viewmodel.search.ageStart}'
+            android:text='@={viewmodel.searchString.ageStart}'
             android:textSize="12sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/age" />
@@ -142,7 +142,7 @@
             android:backgroundTint="@color/steel_gray"
             android:hint="@string/from"
             android:inputType="number"
-            android:text='@{viewmodel.search.ageEnd == null ? "" : viewmodel.search.ageEnd}'
+            android:text='@{viewmodel.searchString.ageEnd}'
             android:textSize="12sp"
             app:layout_constraintStart_toEndOf="@id/editAgeStart"
             app:layout_constraintTop_toBottomOf="@+id/age" />
@@ -167,7 +167,7 @@
             android:backgroundTint="@color/steel_gray"
             android:hint="@string/to"
             android:inputType="number"
-            android:text='@{viewmodel.search.heightStart == null ? "" : viewmodel.search.heightStart}'
+            android:text='@{viewmodel.searchString.heightStart}'
             android:textSize="12sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/height" />
@@ -182,7 +182,7 @@
             android:backgroundTint="@color/steel_gray"
             android:hint="@string/from"
             android:inputType="number"
-            android:text='@{viewmodel.search.heightEnd == null ? "" : viewmodel.search.heightEnd}'
+            android:text='@{viewmodel.searchString.heightEnd}'
             android:textSize="12sp"
             app:layout_constraintStart_toEndOf="@id/editAgeStart"
             app:layout_constraintTop_toBottomOf="@+id/height" />
@@ -207,7 +207,7 @@
             android:backgroundTint="@color/steel_gray"
             android:hint="@string/to"
             android:inputType="number"
-            android:text='@{viewmodel.search.weightStart == null ? "" : viewmodel.search.weightStart}'
+            android:text='@{viewmodel.searchString.weightStart}'
             android:textSize="12sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/weight" />
@@ -222,7 +222,7 @@
             android:backgroundTint="@color/steel_gray"
             android:hint="@string/from"
             android:inputType="number"
-            android:text='@{viewmodel.search.weightEnd == null ? "" : viewmodel.search.weightEnd}'
+            android:text='@{viewmodel.searchString.weightEnd}'
             android:textSize="12sp"
             app:layout_constraintStart_toEndOf="@id/editAgeStart"
             app:layout_constraintTop_toBottomOf="@+id/weight" />
@@ -236,7 +236,6 @@
             android:layout_marginTop="10dp"
             android:backgroundTint="@color/steel_gray"
             android:hint="@string/local_optional"
-            android:text='@{viewmodel.search.local == null ? "" : viewmodel.search.local}'
             android:textSize="12sp"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"

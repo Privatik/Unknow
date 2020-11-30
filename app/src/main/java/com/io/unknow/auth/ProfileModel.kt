@@ -13,20 +13,23 @@ import com.io.unknow.livedata.ProfileLiveData
 import com.io.unknow.model.User
 import javax.inject.Inject
 
-class ProfileModel(liveData: ProfileLiveData) {
+class ProfileModel(val liveData: ProfileLiveData) {
 
     @Inject
     lateinit var mAuth: FirebaseAuth
     @Inject
     lateinit var databaseReference: DatabaseReference
 
+    private val dataBase: DatabaseReference
+
     init {
         App.appComponent.inject(this)
        val currentUser = mAuth.currentUser!!
-        databaseReference.child("users").child(currentUser.uid).addListenerForSingleValueEvent(object : ValueEventListener{
+        dataBase = databaseReference.child("users").child(currentUser.uid)
+            dataBase.addListenerForSingleValueEvent(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
-               val user = snapshot.getValue(User::class.java)!!
-                liveData.setUser(user)
+               val userB = snapshot.getValue(User::class.java)!!
+                liveData.setUser(userB)
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -34,6 +37,16 @@ class ProfileModel(liveData: ProfileLiveData) {
             }
 
         })
+    }
+
+    fun update(user: User){
+        dataBase.setValue(user)
+        liveData.setUser(user)
+    }
+
+    fun exit() {
+        liveData.setUser(null)
+        mAuth.signOut()
     }
 
 

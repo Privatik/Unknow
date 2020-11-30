@@ -6,10 +6,12 @@ import com.google.firebase.database.*
 import com.io.unknow.app.App
 import com.io.unknow.livedata.ProfileLiveData
 import com.io.unknow.livedata.SearchUserLiveData
+import com.io.unknow.livedata.TwoFieldLiveData
 import com.io.unknow.model.Search
 import com.io.unknow.model.SearchMen
 import com.io.unknow.model.User
 import com.io.unknow.parse.CheckMode
+import com.io.unknow.parse.DataParse
 import javax.inject.Inject
 
 class SearchUserModel(private val liveData: SearchUserLiveData) {
@@ -31,6 +33,7 @@ class SearchUserModel(private val liveData: SearchUserLiveData) {
     fun searchUser(search: Search){
         var isFound = false
 
+        val isSex = search.sex == 2
         val isAgeStart = search.ageStart != null
         val isAgeEnd = search.ageEnd != null
         val isHeightStart = search.heightStart != null
@@ -38,6 +41,8 @@ class SearchUserModel(private val liveData: SearchUserLiveData) {
         val isWeightStart = search.weightStart != null
         val isWeightEnd = search.weightEnd != null
         val isLocal = search.local != ""
+
+        val users = TwoFieldLiveData.get.value!!.keys
 
         databaseReference.child(baseId).addListenerForSingleValueEvent(object :
             ValueEventListener{
@@ -49,23 +54,27 @@ class SearchUserModel(private val liveData: SearchUserLiveData) {
                         val uuid = userSnaphot.child("uuid").getValue(String::class.java)!!
                         val searchMen = SearchMen(searchF, userF, uuid)
 
-                        if (searchMen.user.id == user.id) continue
+                        if (searchMen.user.id == user.id || searchMen.user.id in users) continue
 
+                        //Проверка на пол
+                        if (!isSex) {
+                            if (searchMen.user.sex != search.sex) continue
+                        }
                         //Проверка на возраст
-                        if (checkMode.mode(isAgeStart,isAgeEnd,search.ageStart!!,search.ageEnd!!, searchMen.user.age)) continue
-                        if (checkMode.mode(searchMen.search.ageStart != null,searchMen.search.ageEnd != null,searchMen.search.ageStart!!,searchMen.search.ageEnd!!, user.age)) continue
+                        if (checkMode.mode(isAgeStart, isAgeEnd, search.ageStart, search.ageEnd, DataParse.getYear(searchMen.user.age))) continue
+                        if (checkMode.mode(searchMen.search.ageStart != null,searchMen.search.ageEnd != null,searchMen.search.ageStart,searchMen.search.ageEnd, DataParse.getYear(user.age))) continue
                         //Проверка на рост
-                        if (checkMode.mode(isHeightStart,isHeightEnd,search.heightStart!!,search.heightEnd!!, searchMen.user.height)) continue
-                        if (checkMode.mode(searchMen.search.heightStart != null,searchMen.search.heightEnd != null,search.heightStart!!,search.heightEnd!!, user.height)) continue
+                        if (checkMode.mode(isHeightStart,isHeightEnd,search.heightStart,search.heightEnd, searchMen.user.height)) continue
+                        if (checkMode.mode(searchMen.search.heightStart != null,searchMen.search.heightEnd != null,search.heightStart,search.heightEnd, user.height)) continue
                         //Проверка на вес
-                        if (checkMode.mode(isWeightStart,isWeightEnd,search.weightStart!!,search.weightEnd!!, searchMen.user.weight!!)) continue
-                        if (checkMode.mode(searchMen.search.weightStart != null,searchMen.search.weightEnd != null,searchMen.search.weightStart!!,searchMen.search.weightEnd!!, user.weight)) continue
+                        if (checkMode.mode(isWeightStart,isWeightEnd,search.weightStart,search.weightEnd, searchMen.user.weight)) continue
+                        if (checkMode.mode(searchMen.search.weightStart != null,searchMen.search.weightEnd != null,searchMen.search.weightStart,searchMen.search.weightEnd, user.weight)) continue
 
                         isFound = true
-                        liveData.founding(searchMen.uuid,searchMen.user.id)
                         userSnaphot.ref.child("uidUserFriend").setValue(user.id)
                         userSnaphot.ref.removeValue()
                         createModel.createChat(searchMen.uuid,user.id,searchMen.user.id)
+                        liveData.founding(searchMen.uuid,searchMen.user.id)
                         break
                     }
 
@@ -84,23 +93,26 @@ class SearchUserModel(private val liveData: SearchUserLiveData) {
                     override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
                     override fun onCancelled(error: DatabaseError) {}
 
-                    lateinit var uuid: String
+                    lateinit var uidFriend: String
                     var idUser: String? = null
                     override fun onChildRemoved(snapshot: DataSnapshot) {
-                        Log.i("Delete",snapshot.key!!)
+                        Log.i("Delete",snapshot.key)
+                        Log.i("Delete","remove ")
+                        for (snap in snapshot.children){
+                            Log.i("Delete",snap.key)
+                        }
                         if (snapshot.key == "user"){
                             //Log.i("Delete", snapshot.child("user").child("id").value as String)
                             idUser = snapshot.child("id").getValue(String::class.java)
                             Log.i("Delete",if (idUser == null) "Yes" else "No" )
                         }
                        if (snapshot.key == "uuid") {
-                            uuid = snapshot.getValue(String::class.java)!!
-
-                        }
+                           val uuid = snapshot.getValue(String::class.java)!!
+                           createModel.createChat(uuid, idUser!!, uidFriend)
+                           liveData.founding(uuid, uidFriend)
+                       }
                         if (snapshot.key == "uidUserFriend"){
-                        val uidFriend = snapshot.getValue(String::class.java)!!
-                            liveData.founding(uuid, uidFriend)
-                            createModel.createChat(uuid, idUser!!, uidFriend)
+                           uidFriend = snapshot.getValue(String::class.java)!!
                         }
                     }
                 })

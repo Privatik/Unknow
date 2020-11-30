@@ -13,6 +13,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.io.unknow.app.App
 import com.io.unknow.model.User
+import com.io.unknow.parse.DataParse
 import com.io.unknow.ui.activity.LoginActivty
 import com.io.unknow.ui.activity.MainActivity
 import javax.inject.Inject
@@ -43,8 +44,11 @@ class BaseAuth(val activity: Activity) {
                 if (task.isSuccessful) {
                     user.id = task.result!!.user!!.uid
                     createDataBaseField(user, task.result!!.user!!.uid)
+                    activity.startActivity(Intent(activity,MainActivity::class.java))
+                    activity.finish()
                 }
                 else{
+                    Log.i("Login","${task.exception}")
                     Toast.makeText(activity,"${task.exception}",Toast.LENGTH_SHORT).show()
                 }
         }
@@ -53,6 +57,9 @@ class BaseAuth(val activity: Activity) {
 
     private fun createDataBaseField(user: User,uid: String) {
        val ref = databaseReference.child("users").child(uid)
+        if (DataParse.getYear(user.age) >= 18) {
+            user.isBan = true
+        }
         ref.setValue(user)
     }
 

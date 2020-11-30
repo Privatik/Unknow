@@ -1,57 +1,59 @@
 package com.io.unknow.ui.activity
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MotionEvent
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import com.io.unknow.R
+import com.io.unknow.databinding.ActivityLoginBinding
 import com.io.unknow.model.User
 import com.io.unknow.navigation.ICreateUser
+import com.io.unknow.navigation.IScrooll
 import com.io.unknow.ui.dialogfragment.RegisterDialogFragment
 import com.io.unknow.viewmodel.activity.LoginViewModel
 
 
 class LoginActivty: AppCompatActivity(), ICreateUser{
 
-    private lateinit var viewModel: LoginViewModel
-    private lateinit var email: TextView
-    private lateinit var password: TextView
+    private lateinit var binding: ActivityLoginBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        binding = DataBindingUtil.setContentView(this,R.layout.activity_login)
+        setContentView(binding.root)
 
-        viewModel = ViewModelProviders.of(this).get(LoginViewModel::class.java)
-
-        email = findViewById(R.id.login)
-        password = findViewById(R.id.password)
+        binding.viewmodel = ViewModelProviders.of(this).get(LoginViewModel::class.java)
 
         initButton(findViewById(R.id.login_in))
         initButton(findViewById(R.id.register))
 
-        viewModel.initBaseAuth(this)
+        binding.viewmodel?.initBaseAuth(this)
     }
 
     override fun onStart() {
         super.onStart()
-        viewModel.addListener()
+        binding.viewmodel?.addListener()
     }
 
     override fun onStop() {
         super.onStop()
-        viewModel.removeListener()
+        binding.viewmodel?.removeListener()
     }
 
     override fun createAccount(email: String, password: String, user: User) {
-        viewModel.createUser(email, password, user)
+        binding.viewmodel?.createUser(email, password, user)
+        Log.i("Login","${email} ${password} ${user}")
     }
 
     fun initButton(button: Button){
         button.setOnClickListener {
             if (button.id == R.id.login_in) {
-                viewModel.singIn(this, email.text.toString(), password.text.toString())
+                binding.viewmodel?.singIn(this)
             }
             else if (button.id == R.id.register){
                 RegisterDialogFragment().show(supportFragmentManager,"register")
@@ -67,17 +69,5 @@ class LoginActivty: AppCompatActivity(), ICreateUser{
             }
             return@setOnTouchListener false
         }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        viewModel.login = email.text.toString()
-        viewModel.password = password.text.toString()
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        email.text = viewModel.login
-        password.text = viewModel.password
     }
 }

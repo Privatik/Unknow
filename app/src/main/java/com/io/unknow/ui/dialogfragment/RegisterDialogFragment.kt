@@ -10,20 +10,19 @@ import android.widget.*
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProviders
 import com.io.unknow.R
+import com.io.unknow.databinding.FragmentRegisterBinding
 import com.io.unknow.model.User
 import com.io.unknow.navigation.ICreateUser
+import com.io.unknow.parse.DataParse
 import com.io.unknow.util.ToastMessage.message
 import com.io.unknow.viewmodel.dialogfragment.RegisterViewModel
+import java.util.*
 import kotlin.random.Random
 
 class RegisterDialogFragment: DialogFragment(){
 
     private lateinit var createUser: ICreateUser
-    private lateinit var viewModel: RegisterViewModel
-
-    private lateinit var login: EditText
-    private lateinit var password: EditText
-    private lateinit var passwordRepeat: EditText
+    private lateinit var binding: FragmentRegisterBinding
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -32,7 +31,6 @@ class RegisterDialogFragment: DialogFragment(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(RegisterViewModel::class.java)
         setStyle(STYLE_NORMAL,R.style.FullScreenDialogStyle)
     }
 
@@ -43,15 +41,15 @@ class RegisterDialogFragment: DialogFragment(){
     ): View? {
         dialog?.window!!.attributes.windowAnimations = R.style.DialogAnimation
         dialog?.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-        return  inflater.inflate(R.layout.fragment_register,container,false)
+
+        binding = FragmentRegisterBinding.inflate(inflater,container,false)
+        binding.viewmodel = ViewModelProviders.of(this).get(RegisterViewModel::class.java)
+
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        login = view.findViewById<EditText>(R.id.loginEdit)
-        password = view.findViewById<EditText>(R.id.passwordEdit)
-        passwordRepeat = view.findViewById<EditText>(R.id.passwordEditRepeat)
 
         val radioButtonMen = view.findViewById<RadioButton>(R.id.men)
         val radioButtonWomen = view.findViewById<RadioButton>(R.id.women)
@@ -61,57 +59,49 @@ class RegisterDialogFragment: DialogFragment(){
         initButton(view.findViewById(R.id.back))
         initButton(view.findViewById(R.id.register))
 
-        radioGroup.setOnCheckedChangeListener { group, checkedId ->
-            when (checkedId){
-                -1 -> { if (viewModel.isMenSex){initRadioButton(radioButtonMen, radioButtonWomen)}}
-                R.id.men -> {viewModel.isMenSex = true}
-                R.id.women -> {viewModel.isMenSex = false}
-                else ->{}
-            }
-        }
+        initDate()
 
-        initRadioButton(radioButtonMen,radioButtonWomen)
-        initEditText()
     }
 
-    private fun initRadioButton(radioButtonMen: RadioButton, radioButtonWomen: RadioButton) {
-        if (viewModel.isMenSex) radioButtonMen.isChecked = true
-        else radioButtonWomen.isChecked = true
+    private fun initDate() {
+        val calendarEnd = Calendar.getInstance()
+        val calendarStart = Calendar.getInstance()
+
+        calendarStart.set(Calendar.YEAR,calendarStart.get(Calendar.YEAR) - 100)
+
+        binding.age.maxDate = calendarEnd.timeInMillis
+        binding.age.minDate = calendarStart.timeInMillis
+        binding.age.init(calendarEnd.get(Calendar.YEAR),calendarEnd.get(Calendar.MONTH),calendarEnd.get(Calendar.DAY_OF_MONTH),null)
     }
 
-    private fun initEditText() {
-        login.setText(viewModel.login)
-        password.setText(viewModel.password)
-        passwordRepeat.setText(viewModel.passwordRepea)
+    private fun getCalendar():Date{
+        val calendar = Calendar.getInstance()
+
+        calendar.set(Calendar.YEAR, binding.age.year)
+        calendar.set(Calendar.MONTH, binding.age.month)
+        calendar.set(Calendar.DAY_OF_MONTH, binding.age.dayOfMonth)
+
+        return Date(calendar.timeInMillis)
     }
 
     private fun validable(): Boolean {
-        if (login.text.isEmpty()){
+        if (binding.loginEdit.text.isEmpty()){
             message(requireContext(),"Login is empty")
             return false
         }
-        if (password.text.isEmpty()){
+        if (binding.passwordEdit.text.isEmpty()){
             message(requireContext(),"Passwoed is empty")
             return false
         }
-        if (passwordRepeat.text.isEmpty()){
+        if (binding.passwordEditRepeat.text.isEmpty()){
             message(requireContext(),"PasswoedRepeat is empty")
             return false
         }
-        if (passwordRepeat.text.toString() != password.text.toString()){
+        if (binding.passwordEditRepeat.text.toString() != binding.passwordEdit.text.toString()){
             message(requireContext(),"Passwords do not match")
             return false
         }
         return true
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-
-        viewModel.login = login.text.toString()
-        viewModel.password = password.text.toString()
-        viewModel.passwordRepea = passwordRepeat.text.toString()
-
     }
 
 
@@ -123,9 +113,9 @@ class RegisterDialogFragment: DialogFragment(){
             else if (button.id == R.id.register){
                 if (validable()) {
                     createUser.createAccount(
-                        login.text.toString(),
-                        password.text.toString(),
-                        User("", viewModel.sex())
+                        binding.loginEdit.text.toString(),
+                        binding.passwordEdit.text.toString(),
+                        User("", binding.viewmodel!!.isMenSex,DataParse.getString(getCalendar()))
                     )
                     dialog?.cancel()
                 }

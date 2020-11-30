@@ -5,14 +5,16 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.auth.FirebaseAuth
 import com.io.unknow.R
 import com.io.unknow.adapter.ViewPagerAdapter
+import com.io.unknow.navigation.IMainExit
+import com.io.unknow.navigation.IScrooll
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() , IMainExit , IScrooll{
 
     private lateinit var mFirebaseAnalytics: FirebaseAnalytics
+    private lateinit var viewPager: ViewPager2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,9 +23,25 @@ class MainActivity : AppCompatActivity() {
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
 
 
-        val viewPager = findViewById<ViewPager2>(R.id.pager)
+        viewPager = findViewById<ViewPager2>(R.id.pager)
         viewPager.adapter = ViewPagerAdapter(this)
 
         //startActivity(Intent(this, LoginActivty))
+    }
+
+    override fun exit() {
+        startActivity(Intent(this, LoginActivty::class.java))
+        finish()
+    }
+
+    override fun isScrollPager(isPager: Boolean) {
+        if (isPager){
+            viewPager.setOnTouchListener(null)
+        }
+        else{
+            viewPager.setOnTouchListener { v, event ->
+                return@setOnTouchListener true
+            }
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.io.unknow.ui.fragment.messagefragment
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -18,10 +19,7 @@ class TwoFieldFragment : Fragment(){
 
     private lateinit var viewModel: TwoFieldViewModel
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         viewModel = ViewModelProviders.of(this).get(TwoFieldViewModel::class.java)
         return inflater.inflate(R.layout.fragment_messages, container, false)
@@ -35,15 +33,27 @@ class TwoFieldFragment : Fragment(){
 
         viewModel.liveData.observeForever {
 
-            layout.visibility = View.VISIBLE
-            loadingProgressBar.visibility = View.GONE
+            if (layout.visibility == View.GONE) {
+                layout.visibility = View.VISIBLE
+                loadingProgressBar.visibility = View.GONE
+            }
 
             if (it.isEmpty()){
-                //childFragmentManager.beginTransaction().add(R.id.messages_field, EmptyFragment()).commit()
-          //  }else{
+                childFragmentManager.beginTransaction().add(R.id.messages_field, EmptyFragment()).commit()
+            }else{
                 childFragmentManager.beginTransaction().add(R.id.messages_field, ChatListFragment.newInstance(it)).commit()
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.i("TwoField","onStart")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.i("TwoField","onStop")
     }
 
 }

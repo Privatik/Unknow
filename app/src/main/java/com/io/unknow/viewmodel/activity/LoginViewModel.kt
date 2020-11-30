@@ -15,7 +15,7 @@ import com.io.unknow.ui.activity.MainActivity
 class LoginViewModel: ViewModel() {
 
     private var baseAuth: BaseAuth? = null
-    var login: String = ""
+    var loginT: String = ""
     var password: String = ""
 
     fun initBaseAuth(activity: Activity) {
@@ -36,9 +36,10 @@ class LoginViewModel: ViewModel() {
         baseAuth?.createUser(email, password, user)
     }
 
-    fun singIn(context: Context, email: String, password: String){
-        if (validateForm(email,password)) {
-            baseAuth?.singIn(email, password)
+    fun singIn(context: Context){
+        Log.i("Login","${loginT} ${password}")
+        if (validateForm(loginT,password)) {
+            baseAuth?.singIn(loginT, password)
         }
         else{
             Toast.makeText(context,"Empty",Toast.LENGTH_SHORT).show()
@@ -50,5 +51,5 @@ class LoginViewModel: ViewModel() {
     }
 
     private fun validateForm(email: String,password: String): Boolean =
-        email.isNotEmpty() && password.isNotEmpty()
+       email.isNotEmpty() && password.isNotEmpty()
 }

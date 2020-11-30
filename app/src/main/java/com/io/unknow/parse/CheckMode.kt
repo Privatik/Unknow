@@ -2,21 +2,21 @@ package com.io.unknow.parse
 
 class CheckMode {
 
-    fun mode(isStart: Boolean, isEnd: Boolean, start: Int, end: Int, value: Int?):Boolean{
+    fun mode(isStart: Boolean, isEnd: Boolean, start: Int?, end: Int?, value: Int?):Boolean{
         if (value == null && (isStart || isEnd)) return true
 
         if (isStart) {
             if (isEnd) {
-                if (!check(start, end, value!!)) return true
+                if (!check(start!!, end!!, value!!)) return true
             }else {
-                if (checkStart(start, value!!)) return true
+                if (checkStart(start!!, value!!)) return true
             }
         } else if (isEnd) {
             if (isStart) {
-                if (!check(start, end, value!!)) return true
+                if (!check(start!!, end!!, value!!)) return true
             }
             else {
-                if (checkEnd(end, value!!)) return true
+                if (checkEnd(end!!, value!!)) return true
             }
         }
 

@@ -1,16 +1,19 @@
 package com.io.unknow.viewmodel.dialogfragment
 
+import android.util.Log
+import android.widget.RadioGroup
 import androidx.lifecycle.ViewModel
 
 class RegisterViewModel: ViewModel() {
     var login: String = ""
     var password: String = ""
-    var passwordRepea: String = ""
+    var passwordRepear: String = ""
 
-    var isMenSex = true
+    var isMenSex = 0
 
-    fun sex():String{
-        return if (isMenSex) "Men"
-        else "Women"
+    fun onSplitTypeChanged(radioGroup: RadioGroup, id: Int) {
+        Log.i("viewModel","radio")
+        isMenSex = id
+        radioGroup.check(id)
     }
 }

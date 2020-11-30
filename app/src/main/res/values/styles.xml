@@ -19,6 +19,8 @@
     <style name="editText">
         <item name="android:layout_width">300dp</item>
         <item name="android:layout_height">50dp</item>
+        <item name="android:maxLength">3</item>
+        <item name="android:textCursorDrawable">@drawable/cursor_white</item>
         <item name="android:textColorHint">@color/nevada</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
@@ -61,7 +63,12 @@
     </style>
 
     <style parent="Theme.AppCompat.NoActionBar" name="SplashTheme">
-        <item name="android:background">@drawable/bluefon</item>
+        <item name="android:background">@drawable/startfon</item>
+    </style>
+
+    <style name="MyDatePickerStyle" parent="@android:style/Widget.Material.Light.DatePicker">
+        <item name="colorControlNormal">@color/dark_pink</item>
+       <item name="android:headerMonthTextAppearance">@color/dark_pink</item>
     </style>
 
 </resources>

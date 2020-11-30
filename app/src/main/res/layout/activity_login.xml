@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+        <import type="android.view.View"/>
+
+        <variable
+            name="viewmodel"
+            type="com.io.unknow.viewmodel.activity.LoginViewModel"/>
+    </data>
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -31,6 +39,7 @@
         style="@style/editText"
         android:layout_marginBottom="40dp"
         android:hint="@string/login"
+        android:text='@={viewmodel.loginT}'
         android:backgroundTint="@color/steel_gray"
         android:inputType="textEmailAddress"
         app:layout_constraintBottom_toTopOf="@+id/password"
@@ -46,6 +55,7 @@
         android:layout_marginBottom="50dp"
         android:backgroundTint="@color/steel_gray"
         android:inputType="textPassword"
+        android:text='@={viewmodel.password}'
         app:layout_constraintBottom_toTopOf="@+id/register"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -76,3 +86,4 @@
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
+</layout>

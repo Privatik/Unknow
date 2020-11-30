@@ -36,7 +36,6 @@
         android:id="@+id/time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@{message.time}"
         android:textColor="@color/nevada"
         android:textSize="@dimen/time_size"
         android:textStyle="italic"

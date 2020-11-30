@@ -4,8 +4,9 @@ import java.io.Serializable
 
 data class User(
     var id: String = "",
-    val sex: String = "",
-    val age: Int = 0,
+    var sex: Int = 0,
+    var age: String = "",
     var height: Int? = null,
     var weight: Int? = null,
+    var isBan: Boolean = false,
     var local: String? = null) : Serializable

@@ -1,12 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<layout>
+    <data>
+        <import type="android.view.View"/>
+
+        <variable
+            name="viewmodel"
+            type="com.io.unknow.viewmodel.fragment.ProfileViewModel"/>
+    </data>
+<FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.fragment.ProfileFragment"
+    android:background="@color/ebony_clay">
+
+    <ProgressBar
+        android:id="@+id/loading_progress_bar"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_gravity="center"
+        android:indeterminateDrawable="@drawable/progresbar_custom" />
+
+    <TextView
+        android:id="@+id/ban"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Пользователь забанен"
+        android:layout_gravity="center"
+        style="@style/textView"
+        android:visibility="gone"/>
+
+    <Button
+        android:id="@+id/exitBan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:background="@color/steel_gray"
+        android:textSize="20sp"
+        android:drawableStart="@drawable/ic_baseline_exit_to_app_24"
+        android:paddingStart="10dp"
+        android:drawablePadding="5dp"
+        android:gravity="start|center"
+        android:textAllCaps="false"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="10dp"
+        android:textColor="@color/dark_pink"
+        android:text="@string/exit"
+        android:visibility="gone"/>
+
+<LinearLayout
+    android:id="@+id/field"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:visibility="gone">
 
     <Toolbar
         android:layout_width="match_parent"
@@ -30,8 +79,7 @@
     android:scrollbars="none"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:background="@color/ebony_clay">
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -50,76 +98,101 @@
             android:background="@color/steel_gray"
             android:layout_gravity="center" />
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
             android:elevation="3dp"
+            android:background="@color/steel_gray"
             android:orientation="vertical">
 
         <TextView
-            android:layout_width="match_parent"
+            android:id="@+id/blockone"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/sex_age"
             android:textColor="@android:color/white"
             android:padding="10dp"
-            android:background="@color/steel_gray"/>
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/sex"
             style="@style/MarginProfile"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/sex"
-            android:background="@color/steel_gray"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/blockone" />
 
         <TextView
             android:id="@+id/age"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/MarginProfile"
             android:text="@string/age"
-            app:layout_constraintBottom_toTopOf="@id/height"
-            app:layout_constraintStart_toStartOf="@id/sex"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/sex" />
 
-        </LinearLayout>
+            <TextView
+                android:id="@+id/editSex"
+                style="@style/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:layout_marginEnd="10dp"
+                app:layout_constraintBottom_toBottomOf="@+id/sex"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/sex" />
 
-    <LinearLayout
+            <TextView
+                android:id="@+id/editAge"
+                style="@style/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:layout_marginEnd="10dp"
+                app:layout_constraintBottom_toBottomOf="@+id/age"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/age" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
         android:elevation="3dp"
+        android:background="@color/steel_gray"
         android:orientation="vertical">
 
         <TextView
-            android:layout_width="match_parent"
+            android:id="@+id/blocktwo"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/height_weight_local"
             android:textColor="@android:color/white"
             android:padding="10dp"
-            android:background="@color/steel_gray"
-            android:drawableEnd="@drawable/ic_create_24"/>
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/height"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="10dp"
             android:text="@string/height"
             style="@style/MarginProfile"
-            app:layout_constraintBottom_toTopOf="@id/weight"
-            app:layout_constraintStart_toStartOf="@id/age"
-            app:layout_constraintTop_toBottomOf="@+id/age" />
+            app:layout_constraintTop_toBottomOf="@id/blocktwo"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/weight"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/weight"
             style="@style/MarginProfile"
-            app:layout_constraintBottom_toTopOf="@id/local"
-            app:layout_constraintStart_toStartOf="@id/height"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/height" />
 
         <TextView
@@ -130,9 +203,46 @@
             style="@style/MarginProfile"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@id/weight"
-            app:layout_constraintTop_toBottomOf="@+id/weight" />
+            app:layout_constraintTop_toBottomOf="@+id/weight"
+            android:visibility="gone"/>
 
-    </LinearLayout>
+        <ImageButton
+            android:id="@+id/update"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_create_24"
+            android:background="@android:color/transparent"
+            android:padding="14dp"
+            app:layout_constraintBottom_toBottomOf="@+id/blocktwo"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/editHeight"
+            style="@style/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:text='@{viewmodel.user.height == null? "" : viewmodel.user.height + " см"}'
+            android:layout_marginEnd="10dp"
+            app:layout_constraintBottom_toBottomOf="@+id/height"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/height" />
+
+        <TextView
+            android:id="@+id/editWeight"
+            style="@style/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:text='@{viewmodel.user.weight == null? "" : viewmodel.user.weight + " кг"}'
+            android:layout_marginEnd="10dp"
+            app:layout_constraintBottom_toBottomOf="@+id/weight"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/weight" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
         <Button
             android:id="@+id/exit"
@@ -154,3 +264,5 @@
     </LinearLayout>
 </ScrollView>
     </LinearLayout>
+</FrameLayout>
+</layout>
