@@ -84,6 +84,18 @@ class ProfileUpdateDialogFragment: DialogFragment() {
             return@setOnTouchListener false
         }
 
+        binding.editHeight.setOnFocusChangeListener { v, hasFocus ->
+            if (hasFocus){
+                binding.editHeight.setSelection(binding.viewmodel?.height!!.length)
+            }
+        }
+
+        binding.editWeight.setOnFocusChangeListener { v, hasFocus ->
+            if (hasFocus){
+                binding.editWeight.setSelection(binding.viewmodel?.weight!!.length)
+            }
+        }
+
     }
 
     fun editCorrect():Boolean{

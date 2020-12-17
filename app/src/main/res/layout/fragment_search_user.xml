@@ -124,6 +124,7 @@
             android:layout_width="115dp"
             android:layout_height="35dp"
             android:layout_marginTop="10dp"
+            android:maxLength="3"
             android:backgroundTint="@color/steel_gray"
             android:hint="@string/to"
             android:inputType="number"
@@ -139,6 +140,7 @@
             android:layout_height="35dp"
             android:layout_marginStart="5dp"
             android:layout_marginTop="10dp"
+            android:maxLength="3"
             android:backgroundTint="@color/steel_gray"
             android:hint="@string/from"
             android:inputType="number"
@@ -166,6 +168,7 @@
             android:layout_marginTop="10dp"
             android:backgroundTint="@color/steel_gray"
             android:hint="@string/to"
+            android:maxLength="3"
             android:inputType="number"
             android:text='@{viewmodel.searchString.heightStart}'
             android:textSize="12sp"
@@ -181,6 +184,7 @@
             android:layout_marginTop="10dp"
             android:backgroundTint="@color/steel_gray"
             android:hint="@string/from"
+            android:maxLength="3"
             android:inputType="number"
             android:text='@{viewmodel.searchString.heightEnd}'
             android:textSize="12sp"
@@ -206,6 +210,7 @@
             android:layout_marginTop="10dp"
             android:backgroundTint="@color/steel_gray"
             android:hint="@string/to"
+            android:maxLength="3"
             android:inputType="number"
             android:text='@{viewmodel.searchString.weightStart}'
             android:textSize="12sp"
@@ -221,6 +226,7 @@
             android:layout_marginTop="10dp"
             android:backgroundTint="@color/steel_gray"
             android:hint="@string/from"
+            android:maxLength="3"
             android:inputType="number"
             android:text='@{viewmodel.searchString.weightEnd}'
             android:textSize="12sp"

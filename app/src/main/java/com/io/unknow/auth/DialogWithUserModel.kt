@@ -19,6 +19,7 @@ class DialogWithUserModel(private val liveData: DialogWithUserLiveData, messageI
     @Inject lateinit var base: DatabaseReference
     private val baseCurrent: DatabaseReference
     private val baseChat: DatabaseReference
+    private val baseChatUser: DatabaseReference
     private val dataParse = DataParse()
     lateinit var adapter: DialogAdapter
 
@@ -27,6 +28,7 @@ class DialogWithUserModel(private val liveData: DialogWithUserLiveData, messageI
 
         baseCurrent = base.child("messages").child(messageId)
         baseChat = base.child("chats").child(mAuth.currentUser!!.uid).child(userId).child("last_message")
+        baseChatUser = base.child("chats").child(userId).child(mAuth.currentUser!!.uid).child("last_message")
         liveData.load(mutableListOf())
         /*baseCurrent.addListenerForSingleValueEvent(object : ValueEventListener{
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -55,6 +57,7 @@ class DialogWithUserModel(private val liveData: DialogWithUserLiveData, messageI
                 val message = snapshot.getValue(Message::class.java)!!
                 liveData.addMessage(message)
                 baseChat.setValue(message)
+                baseChatUser.setValue(message)
                 updateAllBase()
             }
 

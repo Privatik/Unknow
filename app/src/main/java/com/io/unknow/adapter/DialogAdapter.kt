@@ -16,8 +16,8 @@ import com.io.unknow.util.ToastMessage
 
 class DialogAdapter(private val context: Context, private val list: List<Message>, private val userId: String): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var date: String = ""
     private val TAG = "DialogAdapter"
+    private var isNotLoad = true
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder{
         Log.i(TAG, "draw onCreateViewHolder ${viewType}")
@@ -29,9 +29,10 @@ class DialogAdapter(private val context: Context, private val list: List<Message
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         Log.i(TAG, "onBindViewHolder $position")
-        if (list[position].time.substring(0,10) != date){
-            date = list[position].time.substring(0,10)
+        if (isNotLoad && list.lastIndex == position){
             ToastMessage.topMessage(context,list[position].time.substring(8,10) + CalendarParse.getMounth(list[position].time.substring(5,8)))
+            isNotLoad = false
+            Log.i("Rec","View one toast")
         }
        if (holder is MyMessageItem){
           holder.myMessageBinding.message = list[position]
@@ -41,6 +42,8 @@ class DialogAdapter(private val context: Context, private val list: List<Message
            holder.bind(list[position].time.substring(11,16))
        }
     }
+
+    fun getMessage(position: Int):Message = list[position]
 
     override fun getItemViewType(position: Int): Int {
         if (list[position].userId == userId){

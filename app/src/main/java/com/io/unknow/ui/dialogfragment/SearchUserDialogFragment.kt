@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProviders
 import com.io.unknow.R
@@ -91,6 +92,15 @@ class SearchUserDialogFragment: DialogFragment(){
             Log.i("Dialog","createBase")
             createDialog.open(it.getValue(key),key)
         }
+
+        //selectorEditText(binding.editAgeStart,binding.viewmodel?.searchString!!.ageStart)
+        //selectorEditText(binding.editAgeEnd,binding.viewmodel?.searchString!!.ageEnd)
+        //selectorEditText(binding.editHeightStart,binding.viewmodel?.searchString!!.heightStart)
+        //selectorEditText(binding.editHeightEnd,binding.viewmodel?.searchString!!.heightEnd)
+        //selectorEditText(binding.editWeightStart,binding.viewmodel?.searchString!!.weightStart)
+        //selectorEditText(binding.editWeightEnd,binding.viewmodel?.searchString!!.weightEnd)
+
+
     }
 
     private fun editCorrect(): Boolean{
@@ -119,6 +129,14 @@ class SearchUserDialogFragment: DialogFragment(){
             return false
         }
         return true
+    }
+
+    private fun selectorEditText(editText: EditText, text: String){
+        editText.setOnFocusChangeListener { v, hasFocus ->
+            if (hasFocus){
+                editText.setSelection(text.length)
+            }
+        }
     }
 
     override fun onCancel(dialog: DialogInterface) {

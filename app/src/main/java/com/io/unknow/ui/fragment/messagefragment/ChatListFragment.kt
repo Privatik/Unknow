@@ -2,6 +2,8 @@ package com.io.unknow.ui.fragment.messagefragment
 
 import android.content.Context
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -29,6 +31,7 @@ import java.io.Serializable
 
 class ChatListFragment: Fragment(), ICreateDialog {
     private var adapter: AdapterChats? = null
+    private lateinit var motionLayout: MotionLayout
 
     companion object{
         private val ID_CHATS = "chats"
@@ -41,14 +44,6 @@ class ChatListFragment: Fragment(), ICreateDialog {
             fragment.arguments = args
             return fragment
         }
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
     }
 
     override fun onCreateView(
@@ -64,7 +59,7 @@ class ChatListFragment: Fragment(), ICreateDialog {
         super.onViewCreated(view, savedInstanceState)
 
 
-        val listChats = arguments?.getSerializable(ID_CHATS) as Map<String, Chat>
+        val listChats = arguments?.getSerializable(ID_CHATS) as MutableMap<String, Chat>
 
         val chats = view.findViewById<RecyclerView>(R.id.chats)
         chats.layoutManager = LinearLayoutManager(context,LinearLayoutManager.VERTICAL,false)
@@ -75,7 +70,7 @@ class ChatListFragment: Fragment(), ICreateDialog {
         val fab = view.findViewById<FloatingActionButton>(R.id.fab)
         val searchChat = view.findViewById<EditText>(R.id.search_chat)
 
-        val motionLayout = view.findViewById<MotionLayout>(R.id.motion_base)
+        motionLayout = view.findViewById(R.id.motion_base)
 
         motionLayout.setTransitionListener(object : TransitionAdapter() {
             override fun onTransitionCompleted(motionLayout: MotionLayout, currentId: Int) {
@@ -95,11 +90,36 @@ class ChatListFragment: Fragment(), ICreateDialog {
         fab.setOnClickListener {
             SearchUserDialogFragment.newInstance(this).show(childFragmentManager,"search")
         }
+
+        filterEdit(searchChat, listChats)
+    }
+
+    private fun filterEdit(editText: EditText, list: MutableMap<String, Chat>){
+        editText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                val newList = list.filter{ it.key.contains(s,true) }
+                adapter?.updateList(newList)
+                Log.i("Edit","${newList} ${adapter?.itemCount}")
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
     }
 
     override fun onStart() {
         super.onStart()
         adapter?.notifyDataSetChanged()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (motionLayout.progress > 0.5f){
+            motionLayout.progress = 1f
+        }else{
+            motionLayout.progress = 0f
+        }
     }
 
     override fun open(messageId: String, userId: String) {

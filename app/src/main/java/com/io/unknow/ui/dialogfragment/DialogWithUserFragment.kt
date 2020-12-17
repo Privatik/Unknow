@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
@@ -20,6 +21,8 @@ import com.io.unknow.R
 import com.io.unknow.adapter.DialogAdapter
 import com.io.unknow.databinding.ChatLayoutBinding
 import com.io.unknow.model.Message
+import com.io.unknow.parse.CalendarParse
+import com.io.unknow.util.ToastMessage
 import com.io.unknow.viewmodel.dialogfragment.DialogWithUserViewModel
 
 class DialogWithUserFragment: DialogFragment() {
@@ -96,9 +99,10 @@ class DialogWithUserFragment: DialogFragment() {
 
         Log.i(TAG,"onCreateView")
 
-       binding.viewModel!!.liveData.observeForever {list ->
-               val adapter = DialogAdapter(mContext!!, list, userId)
-               binding.viewModel!!.initAdapter(adapter)
+        var adapter: DialogAdapter? = null
+        binding.viewModel!!.liveData.observeForever {list ->
+               adapter = DialogAdapter(mContext!!, list, userId)
+               binding.viewModel!!.initAdapter(adapter!!)
 
                recyclerView.adapter = adapter
 
@@ -106,6 +110,37 @@ class DialogWithUserFragment: DialogFragment() {
                Log.i("LoadDialog","init adapter")
                    // recyclerView.smoothScrollToPosition(adapter!!.itemCount - 1)
        }
+
+        binding.messagesField.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+            private var date: String = ""
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                if (dy > 0){
+                    if (adapter != null) {
+                        val message = adapter!!.getMessage(layoutManager.findLastVisibleItemPosition())
+                        if (date != message.time.substring(0,10)){
+                        ToastMessage.topMessage(mContext!!, message.time.substring(8, 10) + CalendarParse.getMounth(message.time.substring(5, 8)))
+                            date = message.time.substring(0,10)
+                        }
+                    }
+                    Log.i("RecycleViw","Scroll down ${layoutManager.findFirstVisibleItemPosition()} ${layoutManager.findLastVisibleItemPosition()}")
+                }
+
+                if (dy < 0){
+                     if (adapter != null) {
+                       val message = adapter!!.getMessage(layoutManager.findFirstVisibleItemPosition())
+                         if (date != message.time.substring(0,10)){
+                       ToastMessage.topMessage(mContext!!, message.time.substring(8, 10) + CalendarParse.getMounth(message.time.substring(5, 8)))
+                             date = message.time.substring(0,10)
+                             Log.i("Rec","${date} toast")
+                         }
+                      }
+                    Log.i("RecycleViw","Scroll up  ${layoutManager.findFirstVisibleItemPosition()} ${layoutManager.findLastVisibleItemPosition()}")
+                }
+            }
+        })
 
         binding.back.setOnClickListener { dialog?.cancel() }
     }

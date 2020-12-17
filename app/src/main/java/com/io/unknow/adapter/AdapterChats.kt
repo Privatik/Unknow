@@ -12,15 +12,21 @@ import com.io.unknow.R
 import com.io.unknow.model.Chat
 import com.io.unknow.ui.dialogfragment.DialogWithUserFragment
 
-class AdapterChats(private val map: Map<String, Chat>,val fragment: Fragment) : RecyclerView.Adapter<AdapterChats.ItemChat>() {
+class AdapterChats(private var map: Map<String, Chat>,val fragment: Fragment) : RecyclerView.Adapter<AdapterChats.ItemChat>() {
 
-    private val setUserId: Set<String> = map.keys
+    private var setUserId: Set<String> = map.keys
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemChat =
         ItemChat(LayoutInflater.from(parent.context).inflate(R.layout.chat_item,parent,false),fragment)
 
     override fun onBindViewHolder(holder: ItemChat, position: Int) {
         setUserId.elementAt(position).let { map[it]?.let { it1 -> holder.initer(it, it1) } }
+    }
+
+    fun updateList(newMap: Map<String, Chat>){
+        map = newMap
+        setUserId = map.keys
+        notifyDataSetChanged()
     }
 
     override fun getItemViewType(position: Int): Int = position
