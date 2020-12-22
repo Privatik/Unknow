@@ -93,7 +93,7 @@ class SearchUserModel(private val liveData: SearchUserLiveData) {
                     override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
                     override fun onCancelled(error: DatabaseError) {}
 
-                    lateinit var uidFriend: String
+                    var uidFriend: String? = null
                     var idUser: String? = null
                     override fun onChildRemoved(snapshot: DataSnapshot) {
                         Log.i("Delete",snapshot.key)
@@ -107,9 +107,11 @@ class SearchUserModel(private val liveData: SearchUserLiveData) {
                             Log.i("Delete",if (idUser == null) "Yes" else "No" )
                         }
                        if (snapshot.key == "uuid") {
-                           val uuid = snapshot.getValue(String::class.java)!!
-                           createModel.createChat(uuid, idUser!!, uidFriend)
-                           liveData.founding(uuid, uidFriend)
+                           if (uidFriend != null) {
+                               val uuid = snapshot.getValue(String::class.java)!!
+                               createModel.createChat(uuid, idUser!!, uidFriend!!)
+                               liveData.founding(uuid, uidFriend!!)
+                           }
                        }
                         if (snapshot.key == "uidUserFriend"){
                            uidFriend = snapshot.getValue(String::class.java)!!

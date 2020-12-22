@@ -20,24 +20,28 @@ import androidx.recyclerview.widget.RecyclerView
 import com.io.unknow.R
 import com.io.unknow.adapter.DialogAdapter
 import com.io.unknow.databinding.ChatLayoutBinding
+import com.io.unknow.model.Chat
 import com.io.unknow.model.Message
+import com.io.unknow.navigation.IUpdateDialog
 import com.io.unknow.parse.CalendarParse
 import com.io.unknow.util.ToastMessage
+import com.io.unknow.util.UpdateDateToolbar
 import com.io.unknow.viewmodel.dialogfragment.DialogWithUserViewModel
 
-class DialogWithUserFragment: DialogFragment() {
+class DialogWithUserFragment: DialogFragment() , IUpdateDialog{
 
     private lateinit var binding: ChatLayoutBinding
     private var mContext: Context? = null
+    private lateinit var chat: Chat
 
     companion object{
-        private const val ID_MESSAGE = "messages"
+        private const val ID_CHAT = "chat"
         private const val ID_USER = "user"
         private const val TAG = "Dialog"
 
-        fun newInstance(messageId: String, userId: String):DialogWithUserFragment {
+        fun newInstance(chat: Chat, userId: String):DialogWithUserFragment {
             val args = Bundle()
-            args.putString(ID_MESSAGE,messageId)
+            args.putSerializable(ID_CHAT, chat)
             args.putString(ID_USER,userId)
 
             Log.i(TAG,"newInst")
@@ -78,12 +82,13 @@ class DialogWithUserFragment: DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val userId = arguments?.getString(ID_USER)!!
-        arguments?.getString(ID_MESSAGE,"")?.let { binding.viewModel!!.loadMessages(it, userId) }
+        chat = arguments?.getSerializable(ID_CHAT) as Chat
+        binding.viewModel!!.loadMessages(chat, userId, this)
         binding.name.text = userId
 
-        val recyclerView = view.findViewById<RecyclerView>(R.id.messages_field)
-        val send = view.findViewById<ImageButton>(R.id.send)
-        val editText =  view.findViewById<EditText>(R.id.edit)
+        val recyclerView = binding.messagesField
+        val send = binding.send
+        val editText =  binding.edit
 
         val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         layoutManager.stackFromEnd = true
@@ -111,38 +116,23 @@ class DialogWithUserFragment: DialogFragment() {
                    // recyclerView.smoothScrollToPosition(adapter!!.itemCount - 1)
        }
 
+        val updateDateToolbar = UpdateDateToolbar(mContext!!,adapter, layoutManager)
         binding.messagesField.addOnScrollListener(object : RecyclerView.OnScrollListener(){
             private var date: String = ""
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
-                if (dy > 0){
-                    if (adapter != null) {
-                        val message = adapter!!.getMessage(layoutManager.findLastVisibleItemPosition())
-                        if (date != message.time.substring(0,10)){
-                        ToastMessage.topMessage(mContext!!, message.time.substring(8, 10) + CalendarParse.getMounth(message.time.substring(5, 8)))
-                            date = message.time.substring(0,10)
-                        }
-                    }
-                    Log.i("RecycleViw","Scroll down ${layoutManager.findFirstVisibleItemPosition()} ${layoutManager.findLastVisibleItemPosition()}")
-                }
-
-                if (dy < 0){
-                     if (adapter != null) {
-                       val message = adapter!!.getMessage(layoutManager.findFirstVisibleItemPosition())
-                         if (date != message.time.substring(0,10)){
-                       ToastMessage.topMessage(mContext!!, message.time.substring(8, 10) + CalendarParse.getMounth(message.time.substring(5, 8)))
-                             date = message.time.substring(0,10)
-                             Log.i("Rec","${date} toast")
-                         }
-                      }
-                    Log.i("RecycleViw","Scroll up  ${layoutManager.findFirstVisibleItemPosition()} ${layoutManager.findLastVisibleItemPosition()}")
-                }
+                date = updateDateToolbar.onScroll(date,dy)
             }
         })
 
         binding.back.setOnClickListener { dialog?.cancel() }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        binding.viewModel?.changeDialog(true)
     }
 
     override fun onCancel(dialog: DialogInterface) {
@@ -153,10 +143,15 @@ class DialogWithUserFragment: DialogFragment() {
     override fun onStop() {
         super.onStop()
         Log.i(TAG,"Stop Dialog")
+        binding.viewModel?.changeDialog(false)
     }
 
     override fun onDetach() {
         super.onDetach()
         mContext = null
+    }
+
+    override fun update(size: Int) {
+        binding.messagesField.smoothScrollToPosition(size)
     }
 }

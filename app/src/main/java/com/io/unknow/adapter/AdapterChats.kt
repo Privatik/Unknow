@@ -12,7 +12,7 @@ import com.io.unknow.R
 import com.io.unknow.model.Chat
 import com.io.unknow.ui.dialogfragment.DialogWithUserFragment
 
-class AdapterChats(private var map: Map<String, Chat>,val fragment: Fragment) : RecyclerView.Adapter<AdapterChats.ItemChat>() {
+class AdapterChats(private val map: MutableMap<String, Chat>,val fragment: Fragment) : RecyclerView.Adapter<AdapterChats.ItemChat>() {
 
     private var setUserId: Set<String> = map.keys
 
@@ -23,8 +23,9 @@ class AdapterChats(private var map: Map<String, Chat>,val fragment: Fragment) : 
         setUserId.elementAt(position).let { map[it]?.let { it1 -> holder.initer(it, it1) } }
     }
 
-    fun updateList(newMap: Map<String, Chat>){
-        map = newMap
+    fun updateList(newMap: MutableMap<String, Chat>){
+        map.clear()
+        map.putAll(newMap)
         setUserId = map.keys
         notifyDataSetChanged()
     }
@@ -39,6 +40,7 @@ class AdapterChats(private var map: Map<String, Chat>,val fragment: Fragment) : 
         private val message = itemView.findViewById<TextView>(R.id.message)
         private var messageId: String = ""
         private var userId: String = ""
+        private lateinit var chat: Chat
         private val TAG = "dialogWithUser"
 
         init {
@@ -51,6 +53,7 @@ class AdapterChats(private var map: Map<String, Chat>,val fragment: Fragment) : 
             if (messageId != chat.messages){
                 messageId = chat.messages
                 this.userId = userId
+                this.chat = chat
             }
 
             if (chat.last_message != null){
@@ -63,7 +66,7 @@ class AdapterChats(private var map: Map<String, Chat>,val fragment: Fragment) : 
         }
 
         override fun onClick(v: View?) {
-            DialogWithUserFragment.newInstance(messageId, userId).show(fragment.childFragmentManager,TAG)
+            DialogWithUserFragment.newInstance(chat, userId).show(fragment.childFragmentManager,TAG)
         }
     }
 }

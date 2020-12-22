@@ -15,6 +15,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProviders
 import com.io.unknow.R
 import com.io.unknow.databinding.FragmentSearchUserBinding
+import com.io.unknow.model.Chat
 import com.io.unknow.navigation.ICreateDialog
 import com.io.unknow.util.ToastMessage
 import com.io.unknow.viewmodel.dialogfragment.SearchUserViewModel
@@ -90,7 +91,7 @@ class SearchUserDialogFragment: DialogFragment(){
             dialog?.cancel()
             val key = it.keys.first()
             Log.i("Dialog","createBase")
-            createDialog.open(it.getValue(key),key)
+            createDialog.open(Chat(messages = it.getValue(key)),key)
         }
 
         //selectorEditText(binding.editAgeStart,binding.viewmodel?.searchString!!.ageStart)

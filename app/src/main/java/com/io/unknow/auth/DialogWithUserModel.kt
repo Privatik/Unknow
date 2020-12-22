@@ -9,16 +9,19 @@ import com.google.firebase.database.DatabaseReference
 import com.io.unknow.adapter.DialogAdapter
 import com.io.unknow.app.App
 import com.io.unknow.livedata.DialogWithUserLiveData
+import com.io.unknow.model.Chat
 import com.io.unknow.model.Message
+import com.io.unknow.navigation.IUpdateDialog
 import com.io.unknow.parse.DataParse
 import javax.inject.Inject
 
-class DialogWithUserModel(private val liveData: DialogWithUserLiveData, messageId: String, userId: String) {
+class DialogWithUserModel(private val liveData: DialogWithUserLiveData,val chat: Chat, userId: String,val updateDialog: IUpdateDialog) {
 
     @Inject lateinit var mAuth: FirebaseAuth
     @Inject lateinit var base: DatabaseReference
     private val baseCurrent: DatabaseReference
     private val baseChat: DatabaseReference
+    private val baseStatus: DatabaseReference
     private val baseChatUser: DatabaseReference
     private val dataParse = DataParse()
     lateinit var adapter: DialogAdapter
@@ -26,8 +29,9 @@ class DialogWithUserModel(private val liveData: DialogWithUserLiveData, messageI
     init {
         App.appComponent.inject(this)
 
-        baseCurrent = base.child("messages").child(messageId)
+        baseCurrent = base.child("messages").child(chat.messages)
         baseChat = base.child("chats").child(mAuth.currentUser!!.uid).child(userId).child("last_message")
+        baseStatus = base.child("chats").child(mAuth.currentUser!!.uid).child(userId).child("readNow")
         baseChatUser = base.child("chats").child(userId).child(mAuth.currentUser!!.uid).child("last_message")
         liveData.load(mutableListOf())
         /*baseCurrent.addListenerForSingleValueEvent(object : ValueEventListener{
@@ -71,6 +75,7 @@ class DialogWithUserModel(private val liveData: DialogWithUserLiveData, messageI
 
             private fun updateAllBase() {
                 adapter.notifyDataSetChanged()
+                updateDialog.update(adapter.itemCount - 1)
             }
         })
     }
@@ -83,5 +88,9 @@ class DialogWithUserModel(private val liveData: DialogWithUserLiveData, messageI
     fun createMessage(message: String) {
         val messageModel = Message(message, dataParse.getStringNow(), mAuth.currentUser!!.uid)
         postMessage(messageModel)
+    }
+
+    fun changeDialog(isRead: Boolean){
+        baseStatus.setValue(isRead)
     }
 }

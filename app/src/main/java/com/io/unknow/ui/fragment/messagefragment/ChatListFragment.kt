@@ -63,8 +63,10 @@ class ChatListFragment: Fragment(), ICreateDialog {
 
         val chats = view.findViewById<RecyclerView>(R.id.chats)
         chats.layoutManager = LinearLayoutManager(context,LinearLayoutManager.VERTICAL,false)
-        adapter = AdapterChats(listChats,this)
-        chats.adapter = AdapterChats(listChats,this)
+        val map = mutableMapOf<String, Chat>()
+        map.putAll(listChats)
+        adapter = AdapterChats(map,this)
+        chats.adapter = adapter
         chats.hasFixedSize()
 
         val fab = view.findViewById<FloatingActionButton>(R.id.fab)
@@ -99,9 +101,9 @@ class ChatListFragment: Fragment(), ICreateDialog {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                val newList = list.filter{ it.key.contains(s,true) }
+                val newList = list.filter{ it.key.contains(s,true) } as MutableMap
                 adapter?.updateList(newList)
-                Log.i("Edit","${newList} ${adapter?.itemCount}")
+                Log.i("Edit","${newList} ${list} ")
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -122,7 +124,7 @@ class ChatListFragment: Fragment(), ICreateDialog {
         }
     }
 
-    override fun open(messageId: String, userId: String) {
-        DialogWithUserFragment.newInstance(messageId, userId).show(childFragmentManager,"dialogWithUser")
+    override fun open(chat: Chat, userId: String) {
+        DialogWithUserFragment.newInstance(chat, userId).show(childFragmentManager,"dialogWithUser")
     }
 }
