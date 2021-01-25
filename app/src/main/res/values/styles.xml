@@ -1,6 +1,6 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -17,6 +17,9 @@
     </style>
 
     <style name="editText">
+        <item name="backgroundTint">@color/steel_gray</item>
+        <item name="android:paddingStart">10dp</item>
+        <item name="android:background">@color/steel_gray</item>
         <item name="android:layout_width">300dp</item>
         <item name="android:layout_height">50dp</item>
         <item name="android:textCursorDrawable">@drawable/cursor_white</item>
@@ -39,9 +42,9 @@
         <item name="android:windowIsFloating">false</item>
     </style>
 
-    <style name="MyRadioButton" parent="Theme.AppCompat.Light">
+    <style name="MyRadioButton" parent="Theme.AppCompat">
         <item name="colorControlNormal">@color/nevada</item>
-        <item name="colorControlActivated">@android:color/white</item>
+        <item name="colorControlActivated">@color/nevada</item>
     </style>
 
 
@@ -52,7 +55,6 @@
 
     <style name="MarginProfile" parent="textView">
         <item name="android:padding">10dp</item>
-        <item name="android:background">@color/steel_gray</item>
     </style>
 
     <style name="MarginEditText">
@@ -65,9 +67,43 @@
         <item name="android:background">@drawable/startfon</item>
     </style>
 
-    <style name="MyDatePickerStyle" parent="@android:style/Widget.Material.Light.DatePicker">
+    <style name="MyDatePickerStyle" parent="@android:style/Widget.Material.DatePicker">
         <item name="colorControlNormal">@color/dark_pink</item>
        <item name="android:headerMonthTextAppearance">@color/dark_pink</item>
     </style>
+
+    <style name="background">
+        <item name="android:background">@color/ebony_clay</item>
+    </style>
+
+    <style name="background_item">
+        <item name="android:background">@color/steel_gray</item>
+    </style>
+
+    <style name="background_hint">
+        <item name="android:textColor">@color/nevada</item>
+    </style>
+
+    <style name="background_custom">
+        <item name="android:background">@color/dark_pink</item>
+        <item name="backgroundTint">@color/dark_pink</item>
+    </style>
+
+    <style name="background_dialog_title">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+
+    <style name="MySwitch" parent="Theme.AppCompat">
+        <!-- активное состояние (30% прозрачности для фона) -->
+        <item name="colorControlActivated">@color/curious_blue</item>
+
+        <!-- неактивное состояние ползунка -->
+        <item name="colorSwitchThumbNormal">@color/dark_pink</item>
+
+        <!-- цвет дорожки для неактивного состояния (30% прозрачности) -->
+        <item name="android:colorForeground">@color/curious_blue_</item>
+    </style>
+
 
 </resources>

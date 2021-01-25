@@ -19,7 +19,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/ebony_clay">
+        style="@style/background">
 
         <EditText
             android:id="@+id/loginEdit"
@@ -39,7 +39,6 @@
             android:id="@+id/passwordEdit"
             style="@style/editText"
             android:layout_marginTop="20dp"
-            android:backgroundTint="@color/steel_gray"
             android:hint="@string/password"
             android:text='@={viewmodel.password}'
             android:inputType="textPassword"
@@ -53,7 +52,6 @@
             android:id="@+id/passwordEditRepeat"
             style="@style/editText"
             android:layout_marginTop="20dp"
-            android:backgroundTint="@color/steel_gray"
             android:hint="@string/repeat_password"
             android:text='@={viewmodel.passwordRepear}'
             android:inputType="textPassword"
@@ -64,7 +62,6 @@
             app:layout_constraintTop_toBottomOf="@+id/passwordEdit" />
 
         <TextView
-
             android:id="@+id/textSex"
             style="@style/textView"
             android:layout_width="wrap_content"
@@ -80,7 +77,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:theme="@style/MyRadioButton"
             android:onCheckedChanged="@{viewmodel::onSplitTypeChanged}"
             app:layout_constraintBottom_toTopOf="@+id/textage"
             app:layout_constraintEnd_toEndOf="parent"
@@ -92,11 +88,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/man"
-                android:textColor="@color/dark_pink"
+                style="@style/textView"
                 android:textSize="20sp" />
 
             <RadioButton
                 android:id="@+id/men"
+                android:theme="@style/MyRadioButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="true" />
@@ -107,10 +104,11 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginLeft="20dp"
                 android:text="@string/women"
-                android:textColor="@color/dark_pink"
+                style="@style/textView"
                 android:textSize="20sp" />
 
             <RadioButton
+                android:theme="@style/MyRadioButton"
                 android:id="@+id/women"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />

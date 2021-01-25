@@ -72,18 +72,6 @@ class ProfileUpdateDialogFragment: DialogFragment() {
             }
         }
 
-        binding.save.setOnTouchListener { v, event ->
-            if (event.action == MotionEvent.ACTION_DOWN) {
-                binding.save.setBackgroundResource(R.drawable.background_button_selected)
-                binding.save.setImageResource(R.drawable.ic_baseline_check_24_white)
-            }
-            else if (event.action == MotionEvent.ACTION_UP) {
-                binding.save.setBackgroundResource(R.drawable.background_button_normal)
-                binding.save.setImageResource(R.drawable.ic_baseline_check_24)
-            }
-            return@setOnTouchListener false
-        }
-
         binding.editHeight.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus){
                 binding.editHeight.setSelection(binding.viewmodel?.height!!.length)

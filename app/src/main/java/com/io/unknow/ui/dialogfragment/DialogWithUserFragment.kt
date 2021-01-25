@@ -2,6 +2,8 @@ package com.io.unknow.ui.dialogfragment
 
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
+import android.content.Intent.getIntent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -19,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.io.unknow.R
 import com.io.unknow.adapter.DialogAdapter
+import com.io.unknow.broadcast.NotificationListener
 import com.io.unknow.databinding.ChatLayoutBinding
 import com.io.unknow.model.Chat
 import com.io.unknow.model.Message
@@ -32,7 +35,6 @@ class DialogWithUserFragment: DialogFragment() , IUpdateDialog{
 
     private lateinit var binding: ChatLayoutBinding
     private var mContext: Context? = null
-    private lateinit var chat: Chat
 
     companion object{
         private const val ID_CHAT = "chat"
@@ -48,6 +50,13 @@ class DialogWithUserFragment: DialogFragment() , IUpdateDialog{
             val fragment = DialogWithUserFragment()
             fragment.arguments = args
             return fragment
+        }
+
+        fun newInstance(context: Context, userId: String): Intent{
+            val intent = Intent(context, DialogWithUserFragment::class.java)
+                intent.putExtra(ID_USER, userId)
+
+            return intent
         }
     }
 
@@ -81,9 +90,19 @@ class DialogWithUserFragment: DialogFragment() , IUpdateDialog{
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val userId = arguments?.getString(ID_USER)!!
-        chat = arguments?.getSerializable(ID_CHAT) as Chat
+        var userId: String
+        var chat: Chat?
+        try {
+            userId = arguments?.getString(ID_USER)!!
+            chat = arguments?.getSerializable(ID_CHAT) as Chat
+        }catch (e: Exception){
+            val intent = activity?.intent
+            userId = intent?.getStringExtra(ID_USER)!!
+            chat = null
+        }
+
         binding.viewModel!!.loadMessages(chat, userId, this)
+
         binding.name.text = userId
 
         val recyclerView = binding.messagesField
@@ -133,6 +152,10 @@ class DialogWithUserFragment: DialogFragment() , IUpdateDialog{
     override fun onStart() {
         super.onStart()
         binding.viewModel?.changeDialog(true)
+    }
+
+    override fun onResume() {
+        super.onResume()
     }
 
     override fun onCancel(dialog: DialogInterface) {

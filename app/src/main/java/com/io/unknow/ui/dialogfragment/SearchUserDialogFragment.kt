@@ -73,18 +73,6 @@ class SearchUserDialogFragment: DialogFragment(){
             }
         }
 
-        binding.search.setOnTouchListener { v, event ->
-            if (event.action == MotionEvent.ACTION_DOWN) {
-                binding.search.setBackgroundResource(R.drawable.background_button_selected)
-                binding.search.setTextColor(resources.getColor(R.color.ebony_clay))
-            }
-            else if (event.action == MotionEvent.ACTION_UP) {
-                binding.search.setBackgroundResource(R.drawable.background_button_normal)
-                binding.search.setTextColor(resources.getColor(R.color.dark_pink))
-            }
-            return@setOnTouchListener false
-        }
-
         val createDialog = arguments?.getSerializable(CREATE_DIALOG) as ICreateDialog
 
         binding.viewmodel!!.liveData.observeForever {

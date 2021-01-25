@@ -13,6 +13,7 @@ import com.io.unknow.navigation.IMainExit
 import com.io.unknow.navigation.IScrooll
 import com.io.unknow.ui.dialogfragment.ProfileUpdateDialogFragment
 import com.io.unknow.navigation.IUpdateUser
+import com.io.unknow.ui.dialogfragment.SettingDialogFragment
 import com.io.unknow.viewmodel.fragment.ProfileViewModel
 
 
@@ -66,6 +67,10 @@ class ProfileFragment : Fragment(), IUpdateUser {
                     binding.editWeight.text = binding.viewmodel?.user!!.weight.toString() + " кг"
                 }
             }
+        }
+
+        binding.setting.setOnClickListener {
+            SettingDialogFragment().show(childFragmentManager,"setting")
         }
 
         binding.exit.setOnClickListener {

@@ -88,9 +88,9 @@
         android:id="@+id/save"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:src="@drawable/ic_baseline_check_24"
+        android:src="@drawable/check_image"
         android:layout_marginTop="10dp"
-        android:background="@drawable/background_button_normal"
+        android:background="@drawable/background_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/kg" />
 

@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.io.unknow.app.App
+import com.io.unknow.currentuser.CurrentUser
 import com.io.unknow.livedata.ProfileLiveData
 import com.io.unknow.livedata.SearchUserLiveData
 import com.io.unknow.livedata.TwoFieldLiveData
@@ -42,12 +43,12 @@ class SearchUserModel(private val liveData: SearchUserLiveData) {
         val isWeightEnd = search.weightEnd != null
         val isLocal = search.local != ""
 
-        val users = TwoFieldLiveData.get.value!!.keys
+        val users = CurrentUser.map.keys
 
         databaseReference.child(baseId).addListenerForSingleValueEvent(object :
             ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
-                    val user = ProfileLiveData.get.value!!
+                    val user = CurrentUser.user
                     for (userSnaphot in snapshot.children) {
                         val userF = userSnaphot.child("user").getValue(User::class.java)!!
                         val searchF = userSnaphot.child("search").getValue(Search::class.java)!!
@@ -86,7 +87,7 @@ class SearchUserModel(private val liveData: SearchUserLiveData) {
             private fun push(){
                 val pushId = databaseReference.child(baseId).push().key!!
                 push = databaseReference.child(baseId).child(pushId)
-                push?.setValue(SearchMen(search, ProfileLiveData.get.value!!))
+                push?.setValue(SearchMen(search, CurrentUser.user))
                 push?.addChildEventListener(object : ChildEventListener{
                     override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {}
                     override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}

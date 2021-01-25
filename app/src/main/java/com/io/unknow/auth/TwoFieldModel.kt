@@ -30,7 +30,7 @@ class TwoFieldModel(liveData: TwoFieldLiveData) {
 
                     Log.i("Message","This is id messages ${map[value.key!!]!!.messages} ${map[value.key!!]!!.last_message}")
                 }
-               liveData.loadMessages(map)
+                liveData.loadMessages(map)
             }
 
             override fun onCancelled(error: DatabaseError) {

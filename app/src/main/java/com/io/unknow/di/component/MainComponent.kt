@@ -1,6 +1,7 @@
 package com.io.unknow.di.component
 
 import com.io.unknow.auth.*
+import com.io.unknow.broadcast.NotificationListener
 import com.io.unknow.di.module.MyFireBaseAuth
 import com.io.unknow.di.module.MyFireBaseDatabase
 import com.io.unknow.ui.activity.SplashScreen
@@ -19,4 +20,6 @@ interface MainComponent {
     fun inject(dialogWithUserModel: DialogWithUserModel)
 
     fun inject(activity: SplashScreen)
+
+    fun inject(broadCast: NotificationListener)
 }

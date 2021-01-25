@@ -36,7 +36,7 @@
             app:layout_constraintTop_toTopOf="parent">
             <CustomAttribute
                 app:attributeName="backgroundColor"
-                app:customColorValue="@color/ebony_clay"/>
+                app:customColorValue="@color/motion_expanded"/>
         </Constraint>
     </ConstraintSet>
 
@@ -63,7 +63,7 @@
             app:layout_constraintTop_toTopOf="parent">
             <CustomAttribute
                 app:attributeName="backgroundColor"
-                app:customColorValue="@color/steel_gray"/>
+                app:customColorValue="@color/motion_collapsed"/>
         </Constraint>
 
     </ConstraintSet>

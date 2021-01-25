@@ -1,5 +1,6 @@
 package com.io.unknow.ui.fragment.messagefragment
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -19,6 +20,11 @@ class TwoFieldFragment : Fragment(){
 
     private lateinit var viewModel: TwoFieldViewModel
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        Log.i("TwoField","onAttach")
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         viewModel = ViewModelProviders.of(this).get(TwoFieldViewModel::class.java)
@@ -37,11 +43,23 @@ class TwoFieldFragment : Fragment(){
                 layout.visibility = View.VISIBLE
                 loadingProgressBar.visibility = View.GONE
             }
-
-            if (it.isEmpty()){
-                childFragmentManager.beginTransaction().add(R.id.messages_field, EmptyFragment()).commit()
-            }else{
-                childFragmentManager.beginTransaction().add(R.id.messages_field, ChatListFragment.newInstance(it)).commit()
+            Log.i("TwoFieldFragment","${childFragmentManager.fragments.size}")
+            if (childFragmentManager.fragments.isEmpty()) {
+                if (it.isEmpty()) {
+                    childFragmentManager.beginTransaction()
+                        .add(R.id.messages_field, EmptyFragment()).commit()
+                } else {
+                    childFragmentManager.beginTransaction()
+                        .add(R.id.messages_field, ChatListFragment.newInstance(it)).commit()
+                }
+            }else {
+                if (it.isEmpty()) {
+                    childFragmentManager.beginTransaction()
+                        .replace(R.id.messages_field, EmptyFragment()).commit()
+                } else {
+                    childFragmentManager.beginTransaction()
+                        .replace(R.id.messages_field, ChatListFragment.newInstance(it)).commit()
+                }
             }
         }
     }
@@ -55,5 +73,4 @@ class TwoFieldFragment : Fragment(){
         super.onStop()
         Log.i("TwoField","onStop")
     }
-
 }

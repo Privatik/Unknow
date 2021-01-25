@@ -7,6 +7,7 @@ import android.view.MotionEvent
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import com.io.unknow.R
@@ -15,6 +16,7 @@ import com.io.unknow.model.User
 import com.io.unknow.navigation.ICreateUser
 import com.io.unknow.navigation.IScrooll
 import com.io.unknow.ui.dialogfragment.RegisterDialogFragment
+import com.io.unknow.util.Setting
 import com.io.unknow.viewmodel.activity.LoginViewModel
 
 
@@ -23,6 +25,7 @@ class LoginActivty: AppCompatActivity(), ICreateUser{
     private lateinit var binding: ActivityLoginBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Setting.initActivity(this)
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this,R.layout.activity_login)
         setContentView(binding.root)
@@ -58,16 +61,6 @@ class LoginActivty: AppCompatActivity(), ICreateUser{
             else if (button.id == R.id.register){
                 RegisterDialogFragment().show(supportFragmentManager,"register")
             }
-        }
-
-        button.setOnTouchListener { v, event ->
-            if (event.action == MotionEvent.ACTION_DOWN) {
-                button.isSelected = true
-            }
-            else if (event.action == MotionEvent.ACTION_UP) {
-                button.isSelected = false
-            }
-            return@setOnTouchListener false
         }
     }
 }

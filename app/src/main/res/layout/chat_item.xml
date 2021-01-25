@@ -5,12 +5,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/ebony_clay">
+    style="@style/background">
 <androidx.constraintlayout.widget.ConstraintLayout
     android:id="@+id/content"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/steel_gray"
+    style="@style/background_item"
     android:elevation="5dp"
     android:layout_marginBottom="20dp">
 
@@ -34,8 +34,8 @@
         android:layout_marginStart="10dp"
         android:layout_marginLeft="10dp"
         android:textSize="13sp"
+        style="@style/textView"
         android:layout_marginTop="10dp"
-        android:textColor="@color/dark_pink"
         app:layout_constraintStart_toEndOf="@+id/icon"
         app:layout_constraintTop_toTopOf="@+id/icon" />
 
@@ -45,7 +45,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:textSize="15sp"
-        android:textColor="@color/nevada"
+        style="@style/background_hint"
         app:layout_constraintStart_toStartOf="@+id/id"
         app:layout_constraintTop_toBottomOf="@+id/id" />
 

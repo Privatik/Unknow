@@ -8,7 +8,7 @@ import com.io.unknow.model.User
 import com.io.unknow.parse.DataParse
 
 class ProfileViewModel: ViewModel() {
-    var liveData: ProfileLiveData = ProfileLiveData.get
+    var liveData: ProfileLiveData = ProfileLiveData()
     private val profileModel: ProfileModel = ProfileModel(liveData)
     var user: User = User()
 

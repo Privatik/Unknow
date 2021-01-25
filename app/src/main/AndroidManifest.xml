@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.io.unknow">
 
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
     <application
         android:name=".app.App"
         android:allowBackup="true"
@@ -10,9 +12,20 @@
         android:roundIcon="@mipmap/icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <receiver
+            android:name=".broadcast.NotificationListener"
+            android:enabled="true"
+            android:exported="false"
+            android:process=":notificaton">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
         <service
             android:name=".service.MessageService"
-            android:exported="false"></service>
+            android:exported="false" />
 
         <activity
             android:name=".ui.activity.MainActivity"

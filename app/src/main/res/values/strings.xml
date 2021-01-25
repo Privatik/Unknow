@@ -33,4 +33,9 @@
     <string name="to">От</string>
     <string name="birthday">Дата рождения:</string>
     <string name="save">Сохранить</string>
+    <string name="setting">Настройки</string>
+    <string name="cm"> см</string>
+    <string name="kg"> кг</string>
+    <string name="style">Тема:</string>
+    <string name="language">Язык:</string>
 </resources>

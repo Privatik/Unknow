@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.io.unknow.app.App
+import com.io.unknow.util.Setting
 import javax.inject.Inject
 
 class SplashScreen : AppCompatActivity() {
