@@ -1,4 +1,4 @@
-package com.io.unknow.auth
+package com.io.unknow.firebase
 
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
@@ -9,7 +9,6 @@ import com.google.firebase.database.ValueEventListener
 import com.io.unknow.app.App
 import com.io.unknow.livedata.TwoFieldLiveData
 import com.io.unknow.model.Chat
-import com.io.unknow.model.Message
 import javax.inject.Inject
 
 class TwoFieldModel(liveData: TwoFieldLiveData) {

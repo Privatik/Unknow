@@ -1,4 +1,4 @@
-package com.io.unknow.ui.fragment.messagefragment
+package com.io.unknow.ui.fragment.twoviewpagerfragment
 
 import android.content.Context
 import android.os.Bundle
@@ -11,17 +11,29 @@ import android.widget.FrameLayout
 import android.widget.ProgressBar
 import androidx.lifecycle.ViewModelProviders
 import com.io.unknow.R
+import com.io.unknow.model.Chat
+import com.io.unknow.navigation.IPushTwoFragment
+import com.io.unknow.navigation.IUpdateSwipe
 import com.io.unknow.viewmodel.fragment.TwoFieldViewModel
-import kotlinx.android.synthetic.main.fragment_messages.*
-import java.io.Serializable
 
 
-class TwoFieldFragment : Fragment(){
+class TwoViewPagerFragment : Fragment(), IPushTwoFragment{
 
     private lateinit var viewModel: TwoFieldViewModel
+    private var onSwipe = false
+    private lateinit var layout: FrameLayout
+    private lateinit var loadingProgressBar : ProgressBar
+    private lateinit var updateSwipe: IUpdateSwipe
+    private var chatMap : MutableMap<String,Chat>? = null
+
+    init {
+        Log.i("TwoField","new")
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+
+        updateSwipe = context as IUpdateSwipe
         Log.i("TwoField","onAttach")
     }
 
@@ -33,34 +45,16 @@ class TwoFieldFragment : Fragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.i("TwoField","onViewCreated")
 
-        val loadingProgressBar = view.findViewById<ProgressBar>(R.id.loading_progress_bar)
-        val layout = view.findViewById<FrameLayout>(R.id.messages_field)
+        loadingProgressBar = view.findViewById<ProgressBar>(R.id.loading_progress_bar)
+        layout = view.findViewById<FrameLayout>(R.id.messages_field)
+
+        updateSwipe.update(this)
 
         viewModel.liveData.observeForever {
-
-            if (layout.visibility == View.GONE) {
-                layout.visibility = View.VISIBLE
-                loadingProgressBar.visibility = View.GONE
-            }
             Log.i("TwoFieldFragment","${childFragmentManager.fragments.size}")
-            if (childFragmentManager.fragments.isEmpty()) {
-                if (it.isEmpty()) {
-                    childFragmentManager.beginTransaction()
-                        .add(R.id.messages_field, EmptyFragment()).commit()
-                } else {
-                    childFragmentManager.beginTransaction()
-                        .add(R.id.messages_field, ChatListFragment.newInstance(it)).commit()
-                }
-            }else {
-                if (it.isEmpty()) {
-                    childFragmentManager.beginTransaction()
-                        .replace(R.id.messages_field, EmptyFragment()).commit()
-                } else {
-                    childFragmentManager.beginTransaction()
-                        .replace(R.id.messages_field, ChatListFragment.newInstance(it)).commit()
-                }
-            }
+            chatMap = it
         }
     }
 
@@ -73,4 +67,39 @@ class TwoFieldFragment : Fragment(){
         super.onStop()
         Log.i("TwoField","onStop")
     }
+
+    override fun initViewTwoFragment() {
+        if (chatMap != null && !onSwipe) {
+
+            if (layout.visibility == View.GONE) {
+                layout.visibility = View.VISIBLE
+                loadingProgressBar.visibility = View.GONE
+            }
+
+            onSwipe = true
+            if (childFragmentManager.fragments.isEmpty()) {
+                if (chatMap!!.isEmpty()) {
+                    childFragmentManager.beginTransaction()
+                        .addToBackStack(null)
+                        .add(R.id.messages_field, EmptyFragment()).commit()
+                } else {
+                    childFragmentManager.beginTransaction()
+                        .addToBackStack(null)
+                        .add(R.id.messages_field, ChatListFragment.newInstance(chatMap!!)).commit()
+                }
+            } else {
+                if (chatMap!!.isEmpty()) {
+                    childFragmentManager.beginTransaction()
+                        .addToBackStack(null)
+                        .replace(R.id.messages_field, EmptyFragment()).commit()
+                } else {
+                    childFragmentManager.beginTransaction()
+                        .addToBackStack(null)
+                        .replace(R.id.messages_field, ChatListFragment.newInstance(chatMap!!)).commit()
+                }
+            }
+        }
+    }
+
+
 }

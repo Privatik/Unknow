@@ -1,31 +1,29 @@
 package com.io.unknow.adapter
 
+import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentPagerAdapter
-import androidx.fragment.app.FragmentStatePagerAdapter
-import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.io.unknow.ui.fragment.messagefragment.TwoFieldFragment
-import com.io.unknow.ui.fragment.ProfileFragment
+import com.io.unknow.ui.fragment.oneviewpagerfragment.OneViewPagerFragment
+import com.io.unknow.ui.fragment.twoviewpagerfragment.TwoViewPagerFragment
+import com.io.unknow.ui.fragment.oneviewpagerfragment.ProfileFragment
 
-class ViewPagerAdapter(activity: AppCompatActivity): FragmentStatePagerAdapter(activity.supportFragmentManager){
-    private val profileFragment = ProfileFragment()
-    private val twoFieldFragment = TwoFieldFragment()
+class ViewPagerAdapter(activity: AppCompatActivity,val y: Int): FragmentPagerAdapter(activity.supportFragmentManager){
 
-    /*override fun getItemCount(): Int = 2
+   /* override fun getItemCount(): Int = 2
 
     override fun createFragment(position: Int): Fragment =
         when (position){
-            0 -> profileFragment
+            0 -> ProfileFragment()
             else -> TwoFieldFragment()
         }*/
 
-    override fun getCount(): Int = 2
+   override fun getCount(): Int = 2
 
     override fun getItem(position: Int): Fragment =
         when (position){
-            0 -> profileFragment
-            else -> twoFieldFragment
+            0 -> OneViewPagerFragment(y)
+            else -> TwoViewPagerFragment()
         }
 
 

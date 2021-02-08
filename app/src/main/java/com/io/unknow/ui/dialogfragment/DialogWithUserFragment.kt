@@ -30,6 +30,8 @@ import com.io.unknow.parse.CalendarParse
 import com.io.unknow.util.ToastMessage
 import com.io.unknow.util.UpdateDateToolbar
 import com.io.unknow.viewmodel.dialogfragment.DialogWithUserViewModel
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class DialogWithUserFragment: DialogFragment() , IUpdateDialog{
 
@@ -77,7 +79,7 @@ class DialogWithUserFragment: DialogFragment() , IUpdateDialog{
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View{
         dialog?.window!!.setBackgroundDrawableResource(android.R.color.transparent)
 
         binding = ChatLayoutBinding.inflate(inflater,container,false)
@@ -125,7 +127,7 @@ class DialogWithUserFragment: DialogFragment() , IUpdateDialog{
 
         var adapter: DialogAdapter? = null
         binding.viewModel!!.liveData.observeForever {list ->
-               adapter = DialogAdapter(mContext!!, list, userId)
+               adapter = DialogAdapter(mContext!!, list, userId, childFragmentManager)
                binding.viewModel!!.initAdapter(adapter!!)
 
                recyclerView.adapter = adapter
@@ -135,6 +137,10 @@ class DialogWithUserFragment: DialogFragment() , IUpdateDialog{
                    // recyclerView.smoothScrollToPosition(adapter!!.itemCount - 1)
        }
 
+        binding.viewModel!!.liveDataOnline.observeForever{
+            binding.status.text = if(it) "online" else "offline"
+        }
+
         val updateDateToolbar = UpdateDateToolbar(mContext!!,adapter, layoutManager)
         binding.messagesField.addOnScrollListener(object : RecyclerView.OnScrollListener(){
             private var date: String = ""
@@ -142,7 +148,7 @@ class DialogWithUserFragment: DialogFragment() , IUpdateDialog{
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
-                date = updateDateToolbar.onScroll(date,dy)
+                date = updateDateToolbar.onScroll(date)
             }
         })
 

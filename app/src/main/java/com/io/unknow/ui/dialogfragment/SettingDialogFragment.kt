@@ -20,6 +20,7 @@ import androidx.fragment.app.DialogFragment
 import com.io.unknow.R
 import com.io.unknow.navigation.ISetting
 import com.io.unknow.util.Setting
+import kotlinx.android.synthetic.main.fragment_profile.*
 import java.util.*
 
 private val TAG = SettingDialogFragment::class.simpleName!!
@@ -29,6 +30,8 @@ class SettingDialogFragment: DialogFragment() {
     private lateinit var setting: ISetting
     private var languageChange: String = ""
     private lateinit var spinner: Spinner
+    private var isBlack = false
+    private lateinit var switchCompat: SwitchCompat
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -51,7 +54,7 @@ class SettingDialogFragment: DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val switch = view.findViewById<SwitchCompat>(R.id.theme_switch)
+        switchCompat = view.findViewById<SwitchCompat>(R.id.theme_switch)
         spinner = view.findViewById<Spinner>(R.id.language_spinner)
 
         val adapter = ArrayAdapter(
@@ -63,13 +66,13 @@ class SettingDialogFragment: DialogFragment() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = adapter
 
-        spinnerInit(spinner)
-        switchInit(switch)
+        spinnerInit()
+        switchInit()
         Log.i(TAG,"OnViewCreated")
     }
 
-    private fun switchInit(switchCompat: SwitchCompat){
-        val isBlack = Setting.getThemeBlack()
+    private fun switchInit(){
+        isBlack = Setting.getThemeBlack()
 
         switchCompat.isChecked = !isBlack
 
@@ -79,7 +82,7 @@ class SettingDialogFragment: DialogFragment() {
         }
     }
 
-    private fun spinnerInit(spinner: Spinner){
+    private fun spinnerInit(){
         val edit = Setting.edit()
 
         val languages = arrayListOf("ru","en")
@@ -118,8 +121,8 @@ class SettingDialogFragment: DialogFragment() {
 
     override fun onCancel(dialog: DialogInterface) {
         super.onCancel(dialog)
-        if (languageChange != spinner.selectedItem.toString()) {
-            setting.updateLanguage()
+        if (languageChange != spinner.selectedItem.toString() || isBlack == switchCompat.isChecked) {
+            setting.updateSetting()
         }
     }
 }

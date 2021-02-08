@@ -38,4 +38,9 @@
     <string name="kg"> кг</string>
     <string name="style">Тема:</string>
     <string name="language">Язык:</string>
+    <string name="ban">Пользователь забанен</string>
+    <string name="edit">Редактировать</string>
+    <string name="del">Удалить</string>
+    <string name="cancel">Отмена</string>
+    <string name="delete_for_everyone">Удалить для всех</string>
 </resources>

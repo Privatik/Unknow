@@ -105,5 +105,10 @@
         <item name="android:colorForeground">@color/curious_blue_</item>
     </style>
 
+    <style name="MyCheckBox">
+        <item name="colorControlNormal">@color/dark_pink</item>
+        <item name="colorControlActivated">@color/dark_pink</item>
+    </style>
+
 
 </resources>

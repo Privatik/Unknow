@@ -1,6 +1,6 @@
 package com.io.unknow.di.component
 
-import com.io.unknow.auth.*
+import com.io.unknow.firebase.*
 import com.io.unknow.broadcast.NotificationListener
 import com.io.unknow.di.module.MyFireBaseAuth
 import com.io.unknow.di.module.MyFireBaseDatabase
@@ -16,6 +16,7 @@ interface MainComponent {
     fun inject(profileModel: ProfileModel)
     fun inject(searchUserModel: SearchUserModel)
     fun inject(twoFieldModel: TwoFieldModel)
+    fun inject(oneFieldModel: OneFieldModel)
     fun inject(chatListModel: ChatListModel)
     fun inject(dialogWithUserModel: DialogWithUserModel)
 

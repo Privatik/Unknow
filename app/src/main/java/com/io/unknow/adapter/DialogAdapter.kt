@@ -6,15 +6,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.io.unknow.R
 import com.io.unknow.databinding.MyMessageBinding
 import com.io.unknow.databinding.UserMessageBinding
 import com.io.unknow.model.Message
 import com.io.unknow.parse.CalendarParse
+import com.io.unknow.ui.dialogfragment.EditMessageDialogFragment
 import com.io.unknow.util.ToastMessage
 
-class DialogAdapter(private val context: Context, private val list: List<Message>, private val userId: String): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class DialogAdapter(private val context: Context, private val list: List<Message>, private val userId: String, private val fragmentManager: FragmentManager): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val TAG = "DialogAdapter"
     private var isNotLoad = true
@@ -22,9 +24,9 @@ class DialogAdapter(private val context: Context, private val list: List<Message
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder{
         Log.i(TAG, "draw onCreateViewHolder ${viewType}")
         if (viewType == 1){
-            return MyMessageItem(LayoutInflater.from(parent.context).inflate(R.layout.my_message,parent,false))
+            return MyMessageItem(LayoutInflater.from(parent.context).inflate(R.layout.my_message,parent,false),fragmentManager)
         }
-        return UserMessageItem(LayoutInflater.from(parent.context).inflate(R.layout.user_message,parent,false))
+        return UserMessageItem(LayoutInflater.from(parent.context).inflate(R.layout.user_message,parent,false),fragmentManager)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -55,16 +57,30 @@ class DialogAdapter(private val context: Context, private val list: List<Message
     override fun getItemCount(): Int = list.size
 
 
-    class MyMessageItem(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class MyMessageItem(itemView: View, fragmentManager: FragmentManager) : RecyclerView.ViewHolder(itemView){
        val myMessageBinding = MyMessageBinding.bind(itemView)
+
+        init {
+            itemView.setOnLongClickListener{
+                EditMessageDialogFragment.newInstance(false).show(fragmentManager,"edit")
+                return@setOnLongClickListener true
+            }
+        }
 
         fun bind(time: String){
             myMessageBinding.time.text = time
         }
     }
 
-    class UserMessageItem(itemView: View) : RecyclerView.ViewHolder(itemView){
+    class UserMessageItem(itemView: View, fragmentManager: FragmentManager) : RecyclerView.ViewHolder(itemView){
         val userMessageBinding = UserMessageBinding.bind(itemView)
+
+        init {
+            itemView.setOnLongClickListener{
+                EditMessageDialogFragment.newInstance(true).show(fragmentManager,"edit")
+                return@setOnLongClickListener true
+            }
+        }
 
         fun bind(time: String){
             userMessageBinding.time.text = time

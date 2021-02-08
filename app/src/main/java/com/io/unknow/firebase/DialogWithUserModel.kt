@@ -1,4 +1,4 @@
-package com.io.unknow.auth
+package com.io.unknow.firebase
 
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
@@ -6,6 +6,7 @@ import com.google.firebase.database.*
 import com.io.unknow.adapter.DialogAdapter
 import com.io.unknow.app.App
 import com.io.unknow.livedata.DialogWithUserLiveData
+import com.io.unknow.livedata.OnlineLiveData
 import com.io.unknow.model.Chat
 import com.io.unknow.model.Message
 import com.io.unknow.navigation.IUpdateDialog
@@ -16,7 +17,7 @@ private const val READ = "readNow"
 private const val LAST_MESSAGE = "last_message"
 private const val CHATS = "chats"
 private const val MESSAGES = "messages"
-class DialogWithUserModel(private val liveData: DialogWithUserLiveData, messageId: String, userId: String,val updateDialog: IUpdateDialog) {
+class DialogWithUserModel(private val liveData: DialogWithUserLiveData,val liveDataOnline: OnlineLiveData, messageId: String,val userId: String,val updateDialog: IUpdateDialog) {
 
     @Inject lateinit var mAuth: FirebaseAuth
     @Inject lateinit var base: DatabaseReference
@@ -32,6 +33,7 @@ class DialogWithUserModel(private val liveData: DialogWithUserLiveData, messageI
     init {
         App.appComponent.inject(this)
 
+        onlineUser()
         if (messageId == ""){
             getChat(userId)
         }
@@ -57,15 +59,16 @@ class DialogWithUserModel(private val liveData: DialogWithUserLiveData, messageI
 
     fun InviteCallback(){
         baseMessages.addChildEventListener(object : ChildEventListener {
+
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 Log.i("AdapterDialog", "onChildAdded")
-                val message = snapshot.getValue(Message::class.java)!!
-                liveData.addMessage(message)
-                if (isWritePermission) {
-                    baseMy.child(LAST_MESSAGE).setValue(message)
-                    baseUser.child(LAST_MESSAGE).setValue(message)
-                }
-                updateAllBase()
+                    val message = snapshot.getValue(Message::class.java)!!
+                    liveData.addMessage(message)
+                    if (isWritePermission) {
+                        baseMy.child(LAST_MESSAGE).setValue(message)
+                        baseUser.child(LAST_MESSAGE).setValue(message)
+                    }
+                    updateAllBase()
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
@@ -85,6 +88,8 @@ class DialogWithUserModel(private val liveData: DialogWithUserLiveData, messageI
 
 
     private fun postMessage(message: Message){
+        message.listViewMessage.add(userId)
+        message.listViewMessage.add(message.userId)
         baseMessages.push().setValue(message)
         if (!isReadUser){
             baseNotification.push().setValue(message)
@@ -109,6 +114,17 @@ class DialogWithUserModel(private val liveData: DialogWithUserLiveData, messageI
                 val chat = snapshot.getValue(Chat::class.java)!!
                 baseMessages = base.child(MESSAGES).child(chat.messages)
                 liveData.load(mutableListOf())
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+
+        })
+    }
+
+    fun onlineUser(){
+        base.child("online").child(userId).addListenerForSingleValueEvent(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                liveDataOnline.setOnline(snapshot.getValue(Boolean::class.java)!!)
             }
 
             override fun onCancelled(error: DatabaseError) {}

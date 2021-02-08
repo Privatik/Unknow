@@ -1,6 +1,5 @@
-package com.io.unknow.ui.fragment.messagefragment
+package com.io.unknow.ui.fragment.twoviewpagerfragment
 
-import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,13 +7,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Transformation
 import android.widget.EditText
-import android.widget.LinearLayout
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.constraintlayout.motion.widget.TransitionAdapter
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -22,11 +18,8 @@ import com.io.unknow.R
 import com.io.unknow.adapter.AdapterChats
 import com.io.unknow.model.Chat
 import com.io.unknow.navigation.ICreateDialog
-import com.io.unknow.navigation.ICreateUser
 import com.io.unknow.ui.dialogfragment.DialogWithUserFragment
 import com.io.unknow.ui.dialogfragment.SearchUserDialogFragment
-import com.io.unknow.viewmodel.fragment.ChatListViewModel
-import com.io.unknow.viewmodel.fragment.ProfileViewModel
 import java.io.Serializable
 
 class ChatListFragment: Fragment(), ICreateDialog {

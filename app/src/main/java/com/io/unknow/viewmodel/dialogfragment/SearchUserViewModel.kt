@@ -1,11 +1,9 @@
 package com.io.unknow.viewmodel.dialogfragment
 
 import android.util.Log
-import android.view.View
 import android.widget.RadioGroup
 import androidx.lifecycle.ViewModel
-import com.io.unknow.auth.CreateChatModel
-import com.io.unknow.auth.SearchUserModel
+import com.io.unknow.firebase.SearchUserModel
 import com.io.unknow.livedata.SearchUserLiveData
 import com.io.unknow.model.Search
 import com.io.unknow.model.SearchString

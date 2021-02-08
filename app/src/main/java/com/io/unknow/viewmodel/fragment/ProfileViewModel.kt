@@ -1,35 +1,25 @@
 package com.io.unknow.viewmodel.fragment
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.io.unknow.auth.ProfileModel
-import com.io.unknow.livedata.ProfileLiveData
+import com.io.unknow.firebase.ProfileModel
 import com.io.unknow.model.User
 import com.io.unknow.parse.DataParse
+import com.io.unknow.util.Locate
 
 class ProfileViewModel: ViewModel() {
-    var liveData: ProfileLiveData = ProfileLiveData()
-    private val profileModel: ProfileModel = ProfileModel(liveData)
-    var user: User = User()
-
-    fun updateUser(){
-        user = liveData.value!!
-    }
+    private val profileModel: ProfileModel = ProfileModel()
+    lateinit var user: User
 
     fun sexString():String{
-        if (user.sex == 0) return "Муж"
-        return "Жен"
+        if (user.sex == 0) return Locate.getSexMen()
+        return Locate.getSexWoman()
     }
 
     fun ageString():String {
-        return DataParse.getYear(user.age).toString() + " лет"
+        return DataParse.getYear(user.age).toString() + Locate.getYear()
     }
 
     fun updateUserBase(){
         profileModel.update(user)
-    }
-
-    fun exit(){
-        profileModel.exit()
     }
 }

@@ -1,7 +1,7 @@
 package com.io.unknow.viewmodel.fragment
 
 import androidx.lifecycle.ViewModel
-import com.io.unknow.auth.ChatListModel
+import com.io.unknow.firebase.ChatListModel
 import com.io.unknow.livedata.ChatListLiveData
 
 class ChatListViewModel: ViewModel() {

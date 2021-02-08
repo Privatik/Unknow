@@ -1,6 +1,6 @@
 package com.io.unknow.parse
 
-class CheckMode {
+class CheckParamentMode {
 
     fun mode(isStart: Boolean, isEnd: Boolean, start: Int?, end: Int?, value: Int?):Boolean{
         if (value == null && (isStart || isEnd)) return true

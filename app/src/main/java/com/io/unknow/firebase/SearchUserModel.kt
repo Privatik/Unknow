@@ -1,17 +1,15 @@
-package com.io.unknow.auth
+package com.io.unknow.firebase
 
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.io.unknow.app.App
 import com.io.unknow.currentuser.CurrentUser
-import com.io.unknow.livedata.ProfileLiveData
 import com.io.unknow.livedata.SearchUserLiveData
-import com.io.unknow.livedata.TwoFieldLiveData
 import com.io.unknow.model.Search
 import com.io.unknow.model.SearchMen
 import com.io.unknow.model.User
-import com.io.unknow.parse.CheckMode
+import com.io.unknow.parse.CheckParamentMode
 import com.io.unknow.parse.DataParse
 import javax.inject.Inject
 
@@ -23,7 +21,7 @@ class SearchUserModel(private val liveData: SearchUserLiveData) {
 
     private var push: DatabaseReference? = null
     private val createModel: CreateChatModel
-    private val checkMode = CheckMode()
+    private val checkMode = CheckParamentMode()
     private val baseId = "searchBase"
 
     init {
@@ -55,7 +53,7 @@ class SearchUserModel(private val liveData: SearchUserLiveData) {
                         val uuid = userSnaphot.child("uuid").getValue(String::class.java)!!
                         val searchMen = SearchMen(searchF, userF, uuid)
 
-                        if (searchMen.user.id == user.id || searchMen.user.id in users) continue
+                        if (searchMen.user.id == user!!.id || searchMen.user.id in users) continue
 
                         //Проверка на пол
                         if (!isSex) {
@@ -63,7 +61,7 @@ class SearchUserModel(private val liveData: SearchUserLiveData) {
                         }
                         //Проверка на возраст
                         if (checkMode.mode(isAgeStart, isAgeEnd, search.ageStart, search.ageEnd, DataParse.getYear(searchMen.user.age))) continue
-                        if (checkMode.mode(searchMen.search.ageStart != null,searchMen.search.ageEnd != null,searchMen.search.ageStart,searchMen.search.ageEnd, DataParse.getYear(user.age))) continue
+                        if (checkMode.mode(searchMen.search.ageStart != null,searchMen.search.ageEnd != null,searchMen.search.ageStart,searchMen.search.ageEnd, DataParse.getYear(user!!.age))) continue
                         //Проверка на рост
                         if (checkMode.mode(isHeightStart,isHeightEnd,search.heightStart,search.heightEnd, searchMen.user.height)) continue
                         if (checkMode.mode(searchMen.search.heightStart != null,searchMen.search.heightEnd != null,search.heightStart,search.heightEnd, user.height)) continue
@@ -87,7 +85,7 @@ class SearchUserModel(private val liveData: SearchUserLiveData) {
             private fun push(){
                 val pushId = databaseReference.child(baseId).push().key!!
                 push = databaseReference.child(baseId).child(pushId)
-                push?.setValue(SearchMen(search, CurrentUser.user))
+                push?.setValue(SearchMen(search, CurrentUser.user!!))
                 push?.addChildEventListener(object : ChildEventListener{
                     override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {}
                     override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}

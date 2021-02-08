@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import android.os.SystemClock
 import android.util.Log
+import android.view.View
 import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -17,20 +18,20 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.io.unknow.R
 import com.io.unknow.adapter.ViewPagerAdapter
 import com.io.unknow.broadcast.NotificationListener
-import com.io.unknow.navigation.IMainExit
-import com.io.unknow.navigation.IScrooll
-import com.io.unknow.navigation.ISetting
+import com.io.unknow.currentuser.CurrentUser
+import com.io.unknow.navigation.*
+import com.io.unknow.push.PushNotification
 import com.io.unknow.util.Setting
 import java.lang.NullPointerException
 
 private val TAG = MainActivity::class.simpleName
-class MainActivity : AppCompatActivity() , IMainExit , IScrooll, ISetting{
+class MainActivity : AppCompatActivity() , IMainExit , IScrooll, ISetting, IUpdateSwipe, IUpdateActivity {
 
     private lateinit var mFirebaseAnalytics: FirebaseAnalytics
-    private lateinit var viewPager: ViewPager
-    private val notificationBroadCast = NotificationListener()
-    private lateinit var pendingIntent: PendingIntent
-    private lateinit var scrollView: ScrollView
+    private var viewPager: ViewPager? = null
+   // private lateinit var pushNotification: PushNotification
+    private var pushTwoFragment: IPushTwoFragment? = null
+    private var pushProfileFragment: IPushProfileFragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Setting.initActivity(this)
@@ -39,31 +40,43 @@ class MainActivity : AppCompatActivity() , IMainExit , IScrooll, ISetting{
 
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
 
-        pendingIntent = PendingIntent.getBroadcast(this,0,Intent(this,NotificationListener::class.java),0)
-
-
-//        scrollView = findViewById(R.id.scrollview)
-
-  //      scrollView.scrollTo(0,intent.getIntExtra("update",0))
+        //pushNotification = PushNotification(this)
 
         viewPager = findViewById(R.id.pager)
-        viewPager.adapter = ViewPagerAdapter(this)
+        viewPager?.adapter = ViewPagerAdapter(this, intent.getIntExtra("scroll", 0))
 
-        viewPager.offscreenPageLimit = 1
+        viewPager?.setOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrollStateChanged(state: Int) {}
+
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int
+            ) {
+                if (position == 1) {
+                    pushTwoFragment?.initViewTwoFragment()
+                }
+            }
+
+            override fun onPageSelected(position: Int) {}
+
+        })
+
         //startActivity(Intent(this, LoginActivty))
     }
 
+
     override fun exit() {
+        CurrentUser.user = null
         startActivity(Intent(this, LoginActivty::class.java))
         finish()
     }
 
     override fun isScrollPager(isPager: Boolean) {
-        if (isPager){
-            viewPager.setOnTouchListener(null)
-        }
-        else{
-            viewPager.setOnTouchListener { v, event ->
+        if (isPager) {
+            viewPager?.setOnTouchListener(null)
+        } else {
+            viewPager?.setOnTouchListener { v, event ->
                 return@setOnTouchListener true
             }
         }
@@ -71,41 +84,30 @@ class MainActivity : AppCompatActivity() , IMainExit , IScrooll, ISetting{
 
     override fun onResume() {
         super.onResume()
-        try {
-            cancelAlarm()
-        }catch (e: Exception){}
+      /*  try {
+            pushNotification.cancelAlarm()
+        } catch (e: Exception) {
+        }*/
     }
 
     override fun onStop() {
         super.onStop()
-        Log.i(TAG,"OnStop")
-        createAlarm()
+        Log.i(TAG, "OnStop")
+       // pushNotification.createAlarm()
     }
 
-    override fun updateLanguage() {
-        startActivity(Intent(this, MainActivity::class.java))
+    override fun update(pushTwoFragment: IPushTwoFragment) {
+        this.pushTwoFragment = pushTwoFragment
+    }
+
+    override fun update(pushProfileFragment: IPushProfileFragment) {
+        this.pushProfileFragment = pushProfileFragment
+    }
+
+    override fun updateSetting() {
+        Log.i("ProfileFragment","updateSetting ${pushProfileFragment?.scrollViewGetY()}")
+        startActivity(Intent(this, MainActivity::class.java).putExtra("scroll", pushProfileFragment?.scrollViewGetY()))
+        viewPager = null
         finish()
-    }
-
-    override fun updateTheme(isBlack: Boolean) {
-        Setting.updateTheme(isBlack)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {}
-
-    fun createAlarm(){
-        val am = getSystemService(ALARM_SERVICE) as AlarmManager
-        am.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), 30000, pendingIntent)
-
-        if (android.os.Build.VERSION.SDK_INT >= 19) {
-            am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), 30000, pendingIntent)
-        } else {
-            am.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), 30000, pendingIntent)
-        }
-    }
-
-    fun cancelAlarm(){
-        val am = getSystemService(ALARM_SERVICE) as AlarmManager
-        am.cancel(pendingIntent)
     }
 }

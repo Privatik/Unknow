@@ -19,6 +19,7 @@ object Setting {
         sp = (mContext.applicationContext as App).sp
         updateLanguage(mContext)
         updateTheme(getThemeBlack())
+        Locate.initLocate()
     }
 
     fun edit(): SharedPreferences.Editor{
@@ -40,7 +41,7 @@ object Setting {
     }
 
     fun updateLanguage(mContext: Context){
-        val language = sp.getString(LANGUAGE, Locale.getDefault().language.toLowerCase())
+        val language = getLocateLanguage()
 
             Log.i("Setting",language)
           //  if (Locale.getDefault().language == language) return
@@ -60,4 +61,7 @@ object Setting {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
     }
+
+    fun getLocateLanguage():String =
+        sp.getString(LANGUAGE, Locale.getDefault().language.toLowerCase()).toString()
 }

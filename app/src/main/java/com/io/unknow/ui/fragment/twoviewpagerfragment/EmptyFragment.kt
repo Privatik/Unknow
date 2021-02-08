@@ -1,4 +1,4 @@
-package com.io.unknow.ui.fragment.messagefragment
+package com.io.unknow.ui.fragment.twoviewpagerfragment
 
 import android.os.Bundle
 import android.view.LayoutInflater

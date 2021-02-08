@@ -1,23 +1,23 @@
 package com.io.unknow.viewmodel.dialogfragment
 
 import androidx.lifecycle.ViewModel
-import androidx.recyclerview.widget.RecyclerView
 import com.io.unknow.adapter.DialogAdapter
-import com.io.unknow.auth.DialogWithUserModel
+import com.io.unknow.firebase.DialogWithUserModel
 import com.io.unknow.livedata.DialogWithUserLiveData
+import com.io.unknow.livedata.OnlineLiveData
 import com.io.unknow.model.Chat
 import com.io.unknow.navigation.IUpdateDialog
 
 class DialogWithUserViewModel : ViewModel() {
     val liveData = DialogWithUserLiveData()
+    val liveDataOnline = OnlineLiveData()
     private lateinit var dialogWithUserModel: DialogWithUserModel
 
     fun loadMessages(chat: Chat?, userId: String, updateDialog: IUpdateDialog){
-        if (chat != null){
-            dialogWithUserModel = DialogWithUserModel(liveData,chat.messages, userId, updateDialog)
-        }
-        else{
-            dialogWithUserModel = DialogWithUserModel(liveData,"", userId, updateDialog)
+        dialogWithUserModel = if (chat != null){
+            DialogWithUserModel(liveData, liveDataOnline,chat.messages, userId, updateDialog)
+        } else{
+            DialogWithUserModel(liveData, liveDataOnline,"", userId, updateDialog)
         }
     }
 

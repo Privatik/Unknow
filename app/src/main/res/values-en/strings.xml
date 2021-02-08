@@ -38,4 +38,9 @@
     <string name="kg"> kg</string>
     <string name="style">Style:</string>
     <string name="language">Language:</string>
+    <string name="ban">Ban. You >18</string>
+    <string name="edit">Edit</string>
+    <string name="del">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete_for_everyone">Delete for everyone</string>
 </resources>

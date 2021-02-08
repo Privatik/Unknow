@@ -1,20 +1,14 @@
-package com.io.unknow.auth
+package com.io.unknow.firebase
 
-import android.R.attr
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
-import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.io.unknow.app.App
 import com.io.unknow.model.User
 import com.io.unknow.parse.DataParse
-import com.io.unknow.ui.activity.LoginActivty
 import com.io.unknow.ui.activity.MainActivity
 import javax.inject.Inject
 

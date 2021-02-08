@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <import type="android.view.View"/>
+
+        <variable
+            name="viewmodel"
+            type="com.io.unknow.viewmodel.dialogfragment.RegisterViewModel"/>
+    </data>
+    <ScrollView
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none"
+        android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/background">
+
+
+        <EditText
+            android:id="@+id/loginEdit"
+            style="@style/editText"
+            android:layout_marginStart="20dp"
+            android:backgroundTint="@color/steel_gray"
+            android:hint="@string/login"
+            android:inputType="textEmailAddress"
+            android:text='@={viewmodel.login}'
+            app:layout_constraintBottom_toTopOf="@+id/passwordEdit"
+            app:layout_constraintEnd_toStartOf="@id/age"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <EditText
+            android:id="@+id/passwordEdit"
+            style="@style/editText"
+            android:layout_marginTop="20dp"
+            android:hint="@string/password"
+            android:inputType="textPassword"
+            android:text='@={viewmodel.password}'
+            app:layout_constraintBottom_toTopOf="@+id/passwordEditRepeat"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@id/loginEdit"
+            app:layout_constraintTop_toBottomOf="@+id/loginEdit" />
+
+        <EditText
+            android:id="@+id/passwordEditRepeat"
+            style="@style/editText"
+            android:layout_marginTop="20dp"
+            android:hint="@string/repeat_password"
+            android:inputType="textPassword"
+            android:text='@={viewmodel.passwordRepear}'
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@id/loginEdit"
+            app:layout_constraintTop_toBottomOf="@+id/passwordEdit" />
+
+        <TextView
+            android:id="@+id/textSex"
+            style="@style/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="@string/sex"
+            app:layout_constraintBottom_toTopOf="@+id/radioGroup"
+            app:layout_constraintStart_toStartOf="@id/textage"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="spread" />
+
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:onCheckedChanged="@{viewmodel::onSplitTypeChanged}"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@+id/textage"
+            app:layout_constraintEnd_toEndOf="@+id/age"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@+id/age"
+            app:layout_constraintTop_toBottomOf="@+id/textSex">
+
+            <TextView
+                style="@style/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/man"
+                android:textSize="20sp" />
+
+            <RadioButton
+                android:id="@+id/men"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:theme="@style/MyRadioButton" />
+
+            <TextView
+                style="@style/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginLeft="20dp"
+                android:text="@string/women"
+                android:textSize="20sp" />
+
+            <RadioButton
+                android:id="@+id/women"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:theme="@style/MyRadioButton" />
+
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/textage"
+            style="@style/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/birthday"
+            app:layout_constraintBottom_toTopOf="@id/age"
+            app:layout_constraintCircle="@+id/age"
+            app:layout_constraintCircleAngle="340"
+            app:layout_constraintCircleRadius="140dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/radioGroup" />
+
+        <DatePicker
+            android:id="@+id/age"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:calendarViewShown="false"
+            android:datePickerMode="spinner"
+            android:theme="@style/MyDatePickerStyle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/loginEdit"
+            app:layout_constraintTop_toBottomOf="@+id/textage" />
+
+        <Button
+            android:id="@+id/back"
+            style="@style/button"
+            android:layout_width="wrap_content"
+            android:text="@string/back"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/register"
+            app:layout_constraintStart_toStartOf="@id/passwordEditRepeat"
+            app:layout_constraintTop_toBottomOf="@+id/passwordEditRepeat" />
+
+        <Button
+            android:id="@+id/register"
+            style="@style/button"
+            android:layout_width="wrap_content"
+            android:text="@string/register_now"
+            app:layout_constraintBaseline_toBaselineOf="@id/back"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/passwordEditRepeat"
+            app:layout_constraintStart_toEndOf="@+id/back" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</layout>

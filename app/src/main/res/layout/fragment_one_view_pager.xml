@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fragment.twoviewpagerfragment.TwoViewPagerFragment"
+    tools:context=".ui.fragment.oneviewpagerfragment.OneViewPagerFragment"
     style="@style/background">
 
     <ProgressBar
@@ -15,7 +15,7 @@
         android:indeterminateDrawable="@drawable/progresbar_custom"/>
 
     <FrameLayout
-        android:id="@+id/messages_field"
+        android:id="@+id/field"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"/>

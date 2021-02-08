@@ -1,7 +1,7 @@
 package com.io.unknow.viewmodel.fragment
 
 import androidx.lifecycle.ViewModel
-import com.io.unknow.auth.TwoFieldModel
+import com.io.unknow.firebase.TwoFieldModel
 import com.io.unknow.livedata.TwoFieldLiveData
 
 class TwoFieldViewModel: ViewModel() {

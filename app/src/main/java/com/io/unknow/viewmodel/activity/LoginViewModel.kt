@@ -2,15 +2,11 @@ package com.io.unknow.viewmodel.activity
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.*
-import com.io.unknow.auth.BaseAuth
+import com.io.unknow.firebase.BaseAuth
 import com.io.unknow.model.User
-import com.io.unknow.ui.activity.MainActivity
 
 class LoginViewModel: ViewModel() {
 
