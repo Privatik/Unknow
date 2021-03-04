@@ -1,5 +1,6 @@
 package com.io.unknow.ui.fragment.oneviewpagerfragment
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -8,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.io.unknow.currentuser.CurrentUser
 import com.io.unknow.databinding.FragmentProfileBinding
@@ -18,11 +20,16 @@ import com.io.unknow.util.Locate
 import com.io.unknow.viewmodel.fragment.ProfileViewModel
 
 
+private const val constructorTAG = "ProfileConstructor"
 class ProfileFragment(val exit: IExit) : Fragment(), IUpdateUser, IPushProfileFragment {
 
     private lateinit var binding: FragmentProfileBinding
     private lateinit var mainExit: IMainExit
     private lateinit var updateActitivty: IUpdateActivity
+
+    init {
+        Log.i(constructorTAG,"init")
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -35,11 +42,12 @@ class ProfileFragment(val exit: IExit) : Fragment(), IUpdateUser, IPushProfileFr
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentProfileBinding.inflate(inflater, container, false)
-        binding.viewmodel = ViewModelProviders.of(this).get(ProfileViewModel::class.java)
+        binding.viewmodel = ViewModelProvider(this).get(ProfileViewModel::class.java)
 
         return binding.root
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -82,12 +90,13 @@ class ProfileFragment(val exit: IExit) : Fragment(), IUpdateUser, IPushProfileFr
         }
 
         binding.exit.setOnClickListener {
-            exit.exit()
+            exit?.exit()
             mainExit.exit()
         }
 
     }
 
+    @SuppressLint("SetTextI18n")
     override fun update(height: String, weight: String) {
         if (height == "") {
             binding.viewmodel?.user!!.height = null

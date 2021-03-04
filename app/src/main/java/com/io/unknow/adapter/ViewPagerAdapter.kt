@@ -10,6 +10,8 @@ import com.io.unknow.ui.fragment.oneviewpagerfragment.ProfileFragment
 
 class ViewPagerAdapter(activity: AppCompatActivity,val y: Int): FragmentPagerAdapter(activity.supportFragmentManager){
 
+
+    fun isNoNull(): Boolean = y != 0
    /* override fun getItemCount(): Int = 2
 
     override fun createFragment(position: Int): Fragment =
@@ -22,7 +24,7 @@ class ViewPagerAdapter(activity: AppCompatActivity,val y: Int): FragmentPagerAda
 
     override fun getItem(position: Int): Fragment =
         when (position){
-            0 -> OneViewPagerFragment(y)
+            0 -> if (isNoNull()) OneViewPagerFragment(y) else OneViewPagerFragment()
             else -> TwoViewPagerFragment()
         }
 

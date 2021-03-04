@@ -1,5 +1,9 @@
 package com.io.unknow.viewmodel.dialogfragment
 
+import android.content.Context
+import android.database.Cursor
+import android.net.Uri
+import android.provider.MediaStore
 import androidx.lifecycle.ViewModel
 import com.io.unknow.adapter.DialogAdapter
 import com.io.unknow.firebase.DialogWithUserModel
@@ -8,17 +12,14 @@ import com.io.unknow.livedata.OnlineLiveData
 import com.io.unknow.model.Chat
 import com.io.unknow.navigation.IUpdateDialog
 
+
 class DialogWithUserViewModel : ViewModel() {
     val liveData = DialogWithUserLiveData()
     val liveDataOnline = OnlineLiveData()
     private lateinit var dialogWithUserModel: DialogWithUserModel
 
-    fun loadMessages(chat: Chat?, userId: String, updateDialog: IUpdateDialog){
-        dialogWithUserModel = if (chat != null){
-            DialogWithUserModel(liveData, liveDataOnline,chat.messages, userId, updateDialog)
-        } else{
-            DialogWithUserModel(liveData, liveDataOnline,"", userId, updateDialog)
-        }
+    fun loadMessages(chat: Chat, userId: String, updateDialog: IUpdateDialog){
+        dialogWithUserModel = DialogWithUserModel(liveData, liveDataOnline, chat.messages, userId, updateDialog)
     }
 
     fun initAdapter(adapter: DialogAdapter){
@@ -29,8 +30,12 @@ class DialogWithUserViewModel : ViewModel() {
         dialogWithUserModel.InviteCallback()
     }
 
-    fun sendMessage(message: String){
-        dialogWithUserModel.createMessage(message)
+    fun sendMessageText(message: String){
+        dialogWithUserModel.createMessageText(message)
+    }
+
+    fun sendMessagePhoto(messageUrl: String){
+        dialogWithUserModel.createMessageImage(messageUrl)
     }
 
     fun changeDialog(isRead: Boolean){

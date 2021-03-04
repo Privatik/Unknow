@@ -4,14 +4,13 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.io.unknow.app.App
-import com.io.unknow.model.Message
+import com.io.unknow.model.MessageText
 import com.io.unknow.model.NotificationMessage
 import com.io.unknow.service.MessageService
 import javax.inject.Inject
@@ -38,7 +37,7 @@ class NotificationListener : BroadcastReceiver() {
                 for (userMessages in snapshot.children){
                     val notificationMessage = NotificationMessage(userMessages.key!!)
                     for (messageSnapshot in userMessages.children){
-                        val message = messageSnapshot.getValue(Message::class.java)!!
+                        val message = messageSnapshot.getValue(MessageText::class.java)!!
                         notificationMessage.messageBigText += "${message.text} \n\n"
                         notificationMessage.lastMessage = message.text
                         //messageSnapshot.ref.removeValue()

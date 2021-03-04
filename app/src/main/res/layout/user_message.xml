@@ -7,7 +7,7 @@
 
         <variable
             name="message"
-            type="com.io.unknow.model.Message" />
+            type="com.io.unknow.model.MessageText" />
     </data>
 <androidx.constraintlayout.widget.ConstraintLayout
     android:orientation="vertical"

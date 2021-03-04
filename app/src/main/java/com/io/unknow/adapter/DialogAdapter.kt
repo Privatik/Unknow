@@ -5,18 +5,17 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.io.unknow.R
 import com.io.unknow.databinding.MyMessageBinding
 import com.io.unknow.databinding.UserMessageBinding
-import com.io.unknow.model.Message
+import com.io.unknow.model.MessageText
 import com.io.unknow.parse.CalendarParse
 import com.io.unknow.ui.dialogfragment.EditMessageDialogFragment
 import com.io.unknow.util.ToastMessage
 
-class DialogAdapter(private val context: Context, private val list: List<Message>, private val userId: String, private val fragmentManager: FragmentManager): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class DialogAdapter(private val context: Context, private val list: List<MessageText>, private val userId: String, private val fragmentManager: FragmentManager): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val TAG = "DialogAdapter"
     private var isNotLoad = true
@@ -45,7 +44,7 @@ class DialogAdapter(private val context: Context, private val list: List<Message
        }
     }
 
-    fun getMessage(position: Int):Message = list[position]
+    fun getMessage(position: Int):MessageText = list[position]
 
     override fun getItemViewType(position: Int): Int {
         if (list[position].userId == userId){

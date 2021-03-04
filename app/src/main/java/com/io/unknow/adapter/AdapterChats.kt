@@ -1,5 +1,6 @@
 package com.io.unknow.adapter
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.io.unknow.R
 import com.io.unknow.model.Chat
+import com.io.unknow.ui.activity.DialogActivity
 import com.io.unknow.ui.dialogfragment.DialogWithUserFragment
 
 class AdapterChats(private val map: MutableMap<String, Chat>,val fragment: Fragment) : RecyclerView.Adapter<AdapterChats.ItemChat>() {
@@ -41,7 +43,6 @@ class AdapterChats(private val map: MutableMap<String, Chat>,val fragment: Fragm
         private var messageId: String = ""
         private var userId: String = ""
         private lateinit var chat: Chat
-        private val TAG = "dialogWithUser"
 
         init {
             itemView.findViewById<ConstraintLayout>(R.id.content).setOnClickListener(this)
@@ -66,7 +67,7 @@ class AdapterChats(private val map: MutableMap<String, Chat>,val fragment: Fragm
         }
 
         override fun onClick(v: View?) {
-            DialogWithUserFragment.newInstance(chat, userId).show(fragment.childFragmentManager,TAG)
+            fragment.startActivity(DialogActivity.newInstance(fragment.requireContext(), chat, userId))
         }
     }
 }

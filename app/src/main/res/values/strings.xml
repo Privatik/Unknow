@@ -43,4 +43,6 @@
     <string name="del">Удалить</string>
     <string name="cancel">Отмена</string>
     <string name="delete_for_everyone">Удалить для всех</string>
+    <string name="camera">Камера</string>
+    <string name="to_send">Отправить</string>
 </resources>

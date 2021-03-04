@@ -43,4 +43,6 @@
     <string name="del">Delete</string>
     <string name="cancel">Cancel</string>
     <string name="delete_for_everyone">Delete for everyone</string>
+    <string name="camera">Camera</string>
+    <string name="to_send">To send</string>
 </resources>

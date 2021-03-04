@@ -17,7 +17,7 @@ import com.io.unknow.navigation.IUpdateSwipe
 import com.io.unknow.viewmodel.fragment.TwoFieldViewModel
 
 
-class TwoViewPagerFragment : Fragment(), IPushTwoFragment{
+class  TwoViewPagerFragment : Fragment(), IPushTwoFragment{
 
     private lateinit var viewModel: TwoFieldViewModel
     private var onSwipe = false
@@ -77,27 +77,17 @@ class TwoViewPagerFragment : Fragment(), IPushTwoFragment{
             }
 
             onSwipe = true
-            if (childFragmentManager.fragments.isEmpty()) {
-                if (chatMap!!.isEmpty()) {
-                    childFragmentManager.beginTransaction()
-                        .addToBackStack(null)
-                        .add(R.id.messages_field, EmptyFragment()).commit()
-                } else {
-                    childFragmentManager.beginTransaction()
-                        .addToBackStack(null)
-                        .add(R.id.messages_field, ChatListFragment.newInstance(chatMap!!)).commit()
-                }
+
+            if (chatMap!!.isEmpty()) {
+                childFragmentManager.beginTransaction()
+                    .addToBackStack(null)
+                    .replace(R.id.messages_field, EmptyFragment()).commit()
             } else {
-                if (chatMap!!.isEmpty()) {
-                    childFragmentManager.beginTransaction()
-                        .addToBackStack(null)
-                        .replace(R.id.messages_field, EmptyFragment()).commit()
-                } else {
-                    childFragmentManager.beginTransaction()
-                        .addToBackStack(null)
-                        .replace(R.id.messages_field, ChatListFragment.newInstance(chatMap!!)).commit()
-                }
+                childFragmentManager.beginTransaction()
+                    .addToBackStack(null)
+                    .replace(R.id.messages_field, ChatListFragment.newInstance(chatMap!!)).commit()
             }
+
         }
     }
 

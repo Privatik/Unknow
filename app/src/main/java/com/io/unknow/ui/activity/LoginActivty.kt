@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.io.unknow.R
 import com.io.unknow.databinding.ActivityLoginBinding
@@ -30,7 +31,7 @@ class LoginActivty: AppCompatActivity(), ICreateUser{
         binding = DataBindingUtil.setContentView(this,R.layout.activity_login)
         setContentView(binding.root)
 
-        binding.viewmodel = ViewModelProviders.of(this).get(LoginViewModel::class.java)
+        binding.viewmodel = ViewModelProvider(this).get(LoginViewModel::class.java)
 
         initButton(findViewById(R.id.login_in))
         initButton(findViewById(R.id.register))
