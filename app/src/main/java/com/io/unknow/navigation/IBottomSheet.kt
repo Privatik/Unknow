@@ -4,5 +4,5 @@ interface IBottomSheet {
     fun loadBottomSheet()
     fun closeBottomSheet()
 
-    fun loadImages(): List<String>
+    fun loadInterfaceForLoadImages(loadImageFromGallery: ILoadImageFromGallery)
 }

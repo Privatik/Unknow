@@ -21,7 +21,7 @@ import com.io.unknow.viewmodel.fragment.ProfileViewModel
 
 
 private const val constructorTAG = "ProfileConstructor"
-class ProfileFragment(val exit: IExit) : Fragment(), IUpdateUser, IPushProfileFragment {
+class ProfileFragment(val exit: IExit? = null) : Fragment(), IUpdateUser, IPushProfileFragment {
 
     private lateinit var binding: FragmentProfileBinding
     private lateinit var mainExit: IMainExit

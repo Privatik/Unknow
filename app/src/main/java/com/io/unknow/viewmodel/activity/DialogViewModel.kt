@@ -5,10 +5,15 @@ import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
 import androidx.lifecycle.ViewModel
+import com.io.unknow.firebase.DialogActivityModel
+import com.io.unknow.model.Chat
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class DialogViewModel: ViewModel() {
 
     var isPhotoLoad = false
+    val dialogActivityModel = DialogActivityModel()
 
 
     fun getCameraImages(context: Context): List<String> {
@@ -30,4 +35,6 @@ class DialogViewModel: ViewModel() {
         }
         return listOfAllImages
     }
+
+    fun getChat(userId: String): Flow<Chat>  = dialogActivityModel.getChat(userId = userId)
 }

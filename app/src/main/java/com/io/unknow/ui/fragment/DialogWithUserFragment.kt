@@ -1,4 +1,4 @@
-package com.io.unknow.ui.dialogfragment
+package com.io.unknow.ui.fragment
 
 import android.content.Context
 import android.os.Bundle
@@ -12,15 +12,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.io.unknow.adapter.DialogAdapter
 import com.io.unknow.databinding.ChatLayoutBinding
-import com.io.unknow.databinding.IncludeBottomsheetbehaviorChatLayputBinding
 import com.io.unknow.model.Chat
 import com.io.unknow.navigation.IBottomSheet
+import com.io.unknow.navigation.ILoadImageFromGallery
 import com.io.unknow.navigation.IUpdateDialog
 import com.io.unknow.util.UpdateDateToolbar
 import com.io.unknow.viewmodel.dialogfragment.DialogWithUserViewModel
 
 private const val GALLERY = "Gallery"
-class DialogWithUserFragment: Fragment() , IUpdateDialog {
+class DialogWithUserFragment: Fragment() , IUpdateDialog, ILoadImageFromGallery {
 
     private lateinit var binding: ChatLayoutBinding
     private var mContext: Context? = null
@@ -95,6 +95,8 @@ class DialogWithUserFragment: Fragment() , IUpdateDialog {
               buttomSheet.loadBottomSheet()
         }
 
+        buttomSheet.loadInterfaceForLoadImages(this)
+
 
         binding.back.setOnClickListener { activity?.onBackPressed() }
 
@@ -139,6 +141,10 @@ class DialogWithUserFragment: Fragment() , IUpdateDialog {
                 super.onScrolled(recyclerView, dx, dy)
 
                 date = updateDateToolbar.onScroll(date)
+
+                if (layoutManager.findFirstVisibleItemPosition() == 0){
+                    binding.viewModel?.loadCallback()
+                }
             }
         })
     }
@@ -161,6 +167,16 @@ class DialogWithUserFragment: Fragment() , IUpdateDialog {
 
     override fun update(size: Int) {
         binding.field.recyclerviewMessages.smoothScrollToPosition(size)
+    }
+
+    override fun sendImages(imagesList: List<String>) {
+        imagesList.forEach {
+            binding.viewModel?.sendMessagePhoto(it)
+        }
+    }
+
+    override fun sendImage(imageUrl: String) {
+        binding.viewModel?.sendMessagePhoto(imageUrl)
     }
 
 }

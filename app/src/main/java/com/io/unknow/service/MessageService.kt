@@ -1,9 +1,6 @@
 package com.io.unknow.service
 
-import android.app.IntentService
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
@@ -12,7 +9,8 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.io.unknow.R
 import com.io.unknow.model.NotificationMessage
-import com.io.unknow.ui.dialogfragment.DialogWithUserFragment
+import com.io.unknow.ui.activity.DialogActivity
+import com.io.unknow.ui.fragment.DialogWithUserFragment
 import java.io.Serializable
 
 
@@ -46,7 +44,7 @@ class MessageService : IntentService("MessageService") {
             val pendingIntent = PendingIntent.getActivity(
                 this,
                 0,
-                DialogWithUserFragment.newInstance(baseContext, message.userId),
+                DialogActivity.newInstance(context = this, chat = null, userId = message.userId),
                 PendingIntent.FLAG_UPDATE_CURRENT
             )
 

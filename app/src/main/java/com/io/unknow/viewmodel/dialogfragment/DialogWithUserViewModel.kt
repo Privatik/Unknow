@@ -27,7 +27,7 @@ class DialogWithUserViewModel : ViewModel() {
     }
 
     fun loadCallback(){
-        dialogWithUserModel.InviteCallback()
+        dialogWithUserModel.inviteCallback()
     }
 
     fun sendMessageText(message: String){

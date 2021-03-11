@@ -1,0 +1,6 @@
+package com.io.unknow.navigation
+
+interface ILoadImageFromGallery {
+    fun sendImages(imagesList: List<String>)
+    fun sendImage(imageUrl: String)
+}

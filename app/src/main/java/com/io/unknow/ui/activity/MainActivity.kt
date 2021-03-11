@@ -33,7 +33,7 @@ import java.util.*
 
 private val TAG = MainActivity::class.simpleName
 private const val MY_PERMISSIONS_REQUEST = 1234
-private val PERMISSIONS = arrayOf<String>(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+private val PERMISSIONS = arrayOf<String>(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
 class MainActivity : AppCompatActivity() , IMainExit , IScrooll, ISetting, IUpdateSwipe, IUpdateActivity {
 
     private lateinit var mFirebaseAnalytics: FirebaseAnalytics
@@ -133,6 +133,7 @@ class MainActivity : AppCompatActivity() , IMainExit , IScrooll, ISetting, IUpda
     override fun onStop() {
         super.onStop()
         Log.i(TAG, "OnStop")
+
        // pushNotification.createAlarm()
     }
 

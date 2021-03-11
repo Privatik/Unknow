@@ -9,7 +9,8 @@ import androidx.fragment.app.Fragment
 import com.io.unknow.R
 import com.io.unknow.model.Chat
 import com.io.unknow.navigation.ICreateDialog
-import com.io.unknow.ui.dialogfragment.DialogWithUserFragment
+import com.io.unknow.ui.activity.DialogActivity
+import com.io.unknow.ui.fragment.DialogWithUserFragment
 import com.io.unknow.ui.dialogfragment.SearchUserDialogFragment
 
 class EmptyFragment: Fragment(), ICreateDialog {
@@ -33,6 +34,6 @@ class EmptyFragment: Fragment(), ICreateDialog {
     }
 
     override fun open(chat: Chat, userId: String) {
-        DialogWithUserFragment.newInstance(chat, userId).show(childFragmentManager,"dialogWithUser")
+        DialogActivity.newInstance(context = requireContext(), chat = chat, userId = userId)
     }
 }

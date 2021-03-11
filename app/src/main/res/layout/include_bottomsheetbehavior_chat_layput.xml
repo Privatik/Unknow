@@ -20,6 +20,11 @@
     android:paddingStart="5dp"
     android:paddingEnd="5dp">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        style="@style/background"/>
+
     <Button
         android:id="@+id/camera"
         android:layout_width="match_parent"
