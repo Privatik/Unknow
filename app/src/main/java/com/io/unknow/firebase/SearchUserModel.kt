@@ -47,10 +47,10 @@ class SearchUserModel(private val liveData: SearchUserLiveData) {
             ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                     val user = CurrentUser.user
-                    for (userSnaphot in snapshot.children) {
-                        val userF = userSnaphot.child("user").getValue(User::class.java)!!
-                        val searchF = userSnaphot.child("search").getValue(Search::class.java)!!
-                        val uuid = userSnaphot.child("uuid").getValue(String::class.java)!!
+                    for (userSnapshot in snapshot.children) {
+                        val userF = userSnapshot.child("user").getValue(User::class.java)!!
+                        val searchF = userSnapshot.child("search").getValue(Search::class.java)!!
+                        val uuid = userSnapshot.child("uuid").getValue(String::class.java)!!
                         val searchMen = SearchMen(searchF, userF, uuid)
 
                         if (searchMen.user.id == user!!.id || searchMen.user.id in users) continue
@@ -61,7 +61,8 @@ class SearchUserModel(private val liveData: SearchUserLiveData) {
                         }
                         //Проверка на возраст
                         if (checkMode.mode(isAgeStart, isAgeEnd, search.ageStart, search.ageEnd, DataParse.getYear(searchMen.user.age))) continue
-                        if (checkMode.mode(searchMen.search.ageStart != null,searchMen.search.ageEnd != null,searchMen.search.ageStart,searchMen.search.ageEnd, DataParse.getYear(user!!.age))) continue
+                        if (checkMode.mode(searchMen.search.ageStart != null,searchMen.search.ageEnd != null,searchMen.search.ageStart,searchMen.search.ageEnd, DataParse.getYear(
+                                user.age))) continue
                         //Проверка на рост
                         if (checkMode.mode(isHeightStart,isHeightEnd,search.heightStart,search.heightEnd, searchMen.user.height)) continue
                         if (checkMode.mode(searchMen.search.heightStart != null,searchMen.search.heightEnd != null,search.heightStart,search.heightEnd, user.height)) continue
@@ -70,8 +71,8 @@ class SearchUserModel(private val liveData: SearchUserLiveData) {
                         if (checkMode.mode(searchMen.search.weightStart != null,searchMen.search.weightEnd != null,searchMen.search.weightStart,searchMen.search.weightEnd, user.weight)) continue
 
                         isFound = true
-                        userSnaphot.ref.child("uidUserFriend").setValue(user.id)
-                        userSnaphot.ref.removeValue()
+                        userSnapshot.ref.child("uidUserFriend").setValue(user.id)
+                        userSnapshot.ref.removeValue()
                         createModel.createChat(searchMen.uuid,user.id,searchMen.user.id)
                         liveData.founding(searchMen.uuid,searchMen.user.id)
                         break
@@ -95,10 +96,10 @@ class SearchUserModel(private val liveData: SearchUserLiveData) {
                     var uidFriend: String? = null
                     var idUser: String? = null
                     override fun onChildRemoved(snapshot: DataSnapshot) {
-                        Log.i("Delete",snapshot.key)
+                        Log.i("Delete","${snapshot.key}")
                         Log.i("Delete","remove ")
                         for (snap in snapshot.children){
-                            Log.i("Delete",snap.key)
+                            Log.i("Delete","${snap.key}")
                         }
                         if (snapshot.key == "user"){
                             //Log.i("Delete", snapshot.child("user").child("id").value as String)

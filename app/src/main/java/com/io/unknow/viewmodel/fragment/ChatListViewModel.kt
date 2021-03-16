@@ -6,5 +6,5 @@ import com.io.unknow.livedata.ChatListLiveData
 
 class ChatListViewModel: ViewModel() {
     val liveData: ChatListLiveData = ChatListLiveData()
-    val model: ChatListModel = ChatListModel(liveData)
+    val model: ChatListModel = ChatListModel()
 }

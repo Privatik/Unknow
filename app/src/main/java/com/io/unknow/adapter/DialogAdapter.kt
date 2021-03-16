@@ -5,78 +5,77 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
+import android.widget.TextView
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.io.unknow.R
-import com.io.unknow.databinding.MyMessageBinding
-import com.io.unknow.databinding.UserMessageBinding
-import com.io.unknow.model.Message
-import com.io.unknow.model.TypeMessage
-import com.io.unknow.parse.CalendarParse
+import com.io.unknow.databinding.*
+import com.io.unknow.decoration.SectionCallback
+import com.io.unknow.model.IMessage
+import com.io.unknow.model.MessageDate
+import com.io.unknow.model.MessageImage
+import com.io.unknow.model.MessageText
+import com.io.unknow.navigation.IBindImage
+import com.io.unknow.navigation.IBindText
 import com.io.unknow.ui.dialogfragment.EditMessageDialogFragment
-import com.io.unknow.util.ToastMessage
 
-class DialogAdapter(private val context: Context, private val list: List<Message>, private val userId: String, private val fragmentManager: FragmentManager): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val TAG = "DialogAdapter"
-    private var isNotLoad = true
+private const val TAG = "DialogAdapter"
+class DialogAdapter(private val context: Context, private val list: List<IMessage>, private val userId: String, private val fragmentManager: FragmentManager): RecyclerView.Adapter<RecyclerView.ViewHolder>(),
+    SectionCallback {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder{
-        Log.i(TAG, "draw onCreateViewHolder ${viewType}")
-        if (viewType == 1){
-            return MyMessageItem(LayoutInflater.from(parent.context).inflate(R.layout.my_message,parent,false),fragmentManager)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
+        when (viewType){
+            -1 -> MyMessageTextItem(LayoutInflater.from(parent.context).inflate(R.layout.my_message_text,parent,false),fragmentManager)
+            -2 -> MyMessageImageItem(LayoutInflater.from(parent.context).inflate(R.layout.my_message_image,parent,false),fragmentManager)
+            1 -> UserMessageTextItem(LayoutInflater.from(parent.context).inflate(R.layout.user_message_text,parent,false),fragmentManager)
+            2 -> UserMessageImageItem(LayoutInflater.from(parent.context).inflate(R.layout.user_massage_image,parent,false),fragmentManager)
+            else -> DateItem(LayoutInflater.from(parent.context).inflate(R.layout.item_data_messages,parent,false))
         }
-        return UserMessageItem(LayoutInflater.from(parent.context).inflate(R.layout.user_message,parent,false),fragmentManager)
-    }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         Log.i(TAG, "onBindViewHolder $position")
-        if (isNotLoad && list.lastIndex == position){
-            ToastMessage.topMessage(context,list[position].time.substring(8,10) + CalendarParse.getMounth(list[position].time.substring(5,8)))
-            isNotLoad = false
-            Log.i("Rec","View one toast")
-        }
-
         val message = list[position]
 
-       if (holder is MyMessageItem){
-           holder.myMessageBinding.message = message
+        when (holder) {
+            is DateItem -> {
+                holder.dateBinding.message = message as MessageDate
+            }
+            is MyMessageTextItem -> {
+                holder.myMessageBinding.message = message as MessageText
+                holder.bindText()
+            }
+            is UserMessageTextItem -> {
+                holder.userMessageBinding.message = message as MessageText
+                holder.bindText()
+            }
+            is MyMessageImageItem -> {
+                holder.myMessageBinding.message = message as MessageImage
+                holder.bindImage(context = context)
+            }
+            is UserMessageImageItem -> {
+                holder.userMessageBinding.message = message as MessageImage
+                holder.bindImage(context = context)
+            }
+        }
 
-           if (message.type == TypeMessage.TEXT){
-               holder.bindText(message.time.substring(11,16))
-           }else{
-               holder.bindImage(message.imageUrl,context)
-           }
-
-
-
-       }else if (holder is UserMessageItem){
-          holder.userMessageBinding.message = message
-
-           if (message.type == TypeMessage.TEXT){
-               holder.bindText(message.time.substring(11,16))
-           }else{
-               holder.bindImage(message.imageUrl,context)
-           }
-       }
     }
 
-    fun getMessage(position: Int):Message = list[position]
 
     override fun getItemViewType(position: Int): Int {
-        if (list[position].userId == userId){
-            return 0
+        if (list[position].userId == "") return 0
+        else if (list[position].userId == userId){
+            return if (list[position] is MessageText) 1 else 2
         }
-        return 1
+        return if (list[position] is MessageText) -1 else -2
     }
 
     override fun getItemCount(): Int = list.size
 
 
-    class MyMessageItem(itemView: View, fragmentManager: FragmentManager) : RecyclerView.ViewHolder(itemView), IBindMessage{
-       val myMessageBinding = MyMessageBinding.bind(itemView)
+    class MyMessageTextItem(itemView: View, fragmentManager: FragmentManager) : RecyclerView.ViewHolder(itemView), IBindText{
+       val myMessageBinding = MyMessageTextBinding.bind(itemView)
 
         init {
             itemView.setOnLongClickListener{
@@ -85,29 +84,13 @@ class DialogAdapter(private val context: Context, private val list: List<Message
             }
         }
 
-        override fun bindText(time: String){
-            if (myMessageBinding.time.visibility == View.GONE){
-                myMessageBinding.time.visibility = View.VISIBLE
-                myMessageBinding.image.visibility = View.GONE
-            }
-
-            myMessageBinding.time.text = time
-        }
-
-        override fun bindImage(imageUrl: String, context: Context){
-            if (myMessageBinding.image.visibility == View.GONE){
-                myMessageBinding.image.visibility = View.VISIBLE
-                myMessageBinding.text.visibility = View.GONE
-            }
-
-            Glide.with(context)
-                .load(imageUrl)
-                .into( myMessageBinding.image)
+        override fun bindText(){
+            myMessageBinding.time.text = myMessageBinding.message?.time!!.substring(0,10)
         }
     }
 
-    class UserMessageItem(itemView: View, fragmentManager: FragmentManager) : RecyclerView.ViewHolder(itemView), IBindMessage{
-        val userMessageBinding = UserMessageBinding.bind(itemView)
+    class UserMessageTextItem(itemView: View, fragmentManager: FragmentManager) : RecyclerView.ViewHolder(itemView), IBindText {
+        val userMessageBinding = UserMessageTextBinding.bind(itemView)
 
         init {
             itemView.setOnLongClickListener{
@@ -116,30 +99,65 @@ class DialogAdapter(private val context: Context, private val list: List<Message
             }
         }
 
-        override fun bindText(time: String){
-            if (userMessageBinding.time.visibility == View.GONE){
-                userMessageBinding.time.visibility = View.VISIBLE
-                userMessageBinding.image.visibility = View.GONE
-            }
-
-            userMessageBinding.time.text = time
+        override fun bindText(){
+            userMessageBinding.time.text = userMessageBinding.message?.time!!.substring(0,10)
         }
 
-        override fun bindImage(imageUrl: String, context: Context) {
-            if (userMessageBinding.image.visibility == View.GONE){
-                userMessageBinding.image.visibility = View.VISIBLE
-                userMessageBinding.text.visibility = View.GONE
-            }
+    }
 
+    class MyMessageImageItem(itemView: View, fragmentManager: FragmentManager) : RecyclerView.ViewHolder(itemView), IBindImage{
+        val myMessageBinding = MyMessageImageBinding.bind(itemView)
+
+        init {
+            itemView.setOnLongClickListener{
+                EditMessageDialogFragment.newInstance(false).show(fragmentManager,"edit")
+                return@setOnLongClickListener true
+            }
+        }
+
+
+        override fun bindImage(context: Context){
             Glide.with(context)
-                .load(imageUrl)
-                .into( userMessageBinding.image)
+                .load(myMessageBinding.message?.uri)
+                .into(myMessageBinding.image)
         }
     }
 
-    interface IBindMessage{
-        fun bindText(time: String)
-        fun bindImage(imageUrl: String, context: Context)
+    class UserMessageImageItem(itemView: View, fragmentManager: FragmentManager) : RecyclerView.ViewHolder(itemView),
+        IBindImage {
+        val userMessageBinding = UserMassageImageBinding.bind(itemView)
+
+        init {
+            itemView.setOnLongClickListener{
+                EditMessageDialogFragment.newInstance(true).show(fragmentManager,"edit")
+                return@setOnLongClickListener true
+            }
+        }
+
+        override fun bindImage(context: Context) {
+            Glide.with(context)
+                .load(userMessageBinding.message?.uri)
+                .into(userMessageBinding.image)
+        }
     }
+
+    class DateItem(itemView: View) : RecyclerView.ViewHolder(itemView){
+        val dateBinding = ItemDataMessagesBinding.bind(itemView)
+    }
+
+
+    override fun getHeaderPositionForItem(itemPosition: Int): Int =
+        (itemPosition downTo 0)
+            .map { Pair(isHeader(it), it) }
+            .firstOrNull { it.first }?.second ?: RecyclerView.NO_POSITION
+
+    override fun getHeaderLayout(headerPosition: Int): Int = R.layout.item_data_messages
+
+    override fun bindHeaderData(header: View, headerPosition: Int) {
+        val text = header.findViewById<TextView>(R.id.data)
+        text.text = list[headerPosition].time
+    }
+
+    override fun isHeader(itemPosition: Int): Boolean = list[itemPosition] is MessageDate
 
 }

@@ -3,26 +3,21 @@ package com.io.unknow.ui.dialogfragment
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.ViewModelProviders
-import com.io.unknow.R
+import androidx.lifecycle.ViewModelProvider
 import com.io.unknow.databinding.FragmentSearchUserBinding
 import com.io.unknow.model.Chat
 import com.io.unknow.navigation.ICreateDialog
 import com.io.unknow.util.ToastMessage
 import com.io.unknow.viewmodel.dialogfragment.SearchUserViewModel
 
+private const val TAG = "dialogWithUser"
 class SearchUserDialogFragment: DialogFragment(){
     private lateinit var binding: FragmentSearchUserBinding
-    private val TAG = "dialogWithUser"
     private var mContext: Context? = null
 
     companion object{
@@ -43,11 +38,6 @@ class SearchUserDialogFragment: DialogFragment(){
         mContext = context
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        //setStyle(STYLE_NORMAL, R.style.FullScreenDialogStyle)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -57,7 +47,7 @@ class SearchUserDialogFragment: DialogFragment(){
         dialog!!.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         binding = FragmentSearchUserBinding.inflate(inflater,container,false)
-        binding.viewmodel = ViewModelProviders.of(this).get(SearchUserViewModel::class.java)
+        binding.viewmodel = ViewModelProvider(this).get(SearchUserViewModel::class.java)
 
         return binding.root
     }
@@ -118,14 +108,6 @@ class SearchUserDialogFragment: DialogFragment(){
             return false
         }
         return true
-    }
-
-    private fun selectorEditText(editText: EditText, text: String){
-        editText.setOnFocusChangeListener { v, hasFocus ->
-            if (hasFocus){
-                editText.setSelection(text.length)
-            }
-        }
     }
 
     override fun onCancel(dialog: DialogInterface) {

@@ -1,14 +1,16 @@
 package com.io.unknow.livedata
 
 import androidx.lifecycle.LiveData
-import com.io.unknow.model.Message
+import com.io.unknow.model.IMessage
 
-class DialogWithUserLiveData: LiveData<MutableList<Message>>() {
-    fun load(list: MutableList<Message>){
+class DialogWithUserLiveData: LiveData<MutableList<IMessage>>() {
+    fun load(list: MutableList<IMessage>){
         value = list
     }
 
-    fun addMessage(messageText: Message){
-        value?.add(messageText)
+    fun addMessage(iMessage: IMessage?){
+        if (iMessage != null) {
+            value?.add(iMessage)
+        }
     }
 }

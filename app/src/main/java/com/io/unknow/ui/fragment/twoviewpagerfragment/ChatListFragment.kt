@@ -19,7 +19,6 @@ import com.io.unknow.adapter.AdapterChats
 import com.io.unknow.model.Chat
 import com.io.unknow.navigation.ICreateDialog
 import com.io.unknow.ui.activity.DialogActivity
-import com.io.unknow.ui.fragment.DialogWithUserFragment
 import com.io.unknow.ui.dialogfragment.SearchUserDialogFragment
 import java.io.Serializable
 
@@ -28,7 +27,7 @@ class ChatListFragment: Fragment(), ICreateDialog {
     private lateinit var motionLayout: MotionLayout
 
     companion object{
-        private val ID_CHATS = "chats"
+        private const val ID_CHATS = "chats"
 
         fun newInstance(map: Map<String,Chat>): ChatListFragment{
             val args = Bundle()
@@ -97,7 +96,7 @@ class ChatListFragment: Fragment(), ICreateDialog {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 val newList = list.filter{ it.key.contains(s,true) } as MutableMap
                 adapter?.updateList(newList)
-                Log.i("Edit","${newList} ${list} ")
+                Log.i("Edit","$newList $list ")
             }
 
             override fun afterTextChanged(s: Editable?) {}

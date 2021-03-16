@@ -2,9 +2,7 @@ package com.io.unknow.ui.dialogfragment
 
 
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.content.DialogInterface
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,14 +11,12 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
-import android.widget.ScrollView
 import android.widget.Spinner
 import androidx.appcompat.widget.SwitchCompat
 import androidx.fragment.app.DialogFragment
 import com.io.unknow.R
 import com.io.unknow.navigation.ISetting
 import com.io.unknow.util.Setting
-import kotlinx.android.synthetic.main.fragment_profile.*
 import java.util.*
 
 private val TAG = SettingDialogFragment::class.simpleName!!
@@ -54,8 +50,8 @@ class SettingDialogFragment: DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        switchCompat = view.findViewById<SwitchCompat>(R.id.theme_switch)
-        spinner = view.findViewById<Spinner>(R.id.language_spinner)
+        switchCompat = view.findViewById(R.id.theme_switch)
+        spinner = view.findViewById(R.id.language_spinner)
 
         val adapter = ArrayAdapter(
             mContext!!, android.R.layout.simple_spinner_item, arrayListOf(
@@ -77,7 +73,7 @@ class SettingDialogFragment: DialogFragment() {
         switchCompat.isChecked = !isBlack
 
         val edit = Setting.edit()
-        switchCompat.setOnCheckedChangeListener { buttonView, isChecked ->
+        switchCompat.setOnCheckedChangeListener { _, isChecked ->
             Setting.setTheme(edit,!isChecked)
         }
     }
@@ -86,7 +82,7 @@ class SettingDialogFragment: DialogFragment() {
         val edit = Setting.edit()
 
         val languages = arrayListOf("ru","en")
-        val language = Locale.getDefault().language.toLowerCase()
+        val language = Locale.getDefault().language.toLowerCase(Locale.getDefault())
         if (language in languages){
             if(language == "ru") {
                 spinner.setSelection(0)

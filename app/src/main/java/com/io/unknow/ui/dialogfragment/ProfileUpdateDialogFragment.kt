@@ -2,16 +2,12 @@ package com.io.unknow.ui.dialogfragment
 
 import android.content.Context
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.ViewModelProviders
-import com.io.unknow.R
+import androidx.lifecycle.ViewModelProvider
 import com.io.unknow.databinding.FragmentProfileUpdateBinding
 import com.io.unknow.navigation.IUpdateUser
 import com.io.unknow.util.ToastMessage
@@ -52,7 +48,7 @@ class ProfileUpdateDialogFragment: DialogFragment() {
         dialog!!.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         binding = FragmentProfileUpdateBinding.inflate(inflater,container,false)
-        binding.viewmodel = ViewModelProviders.of(this).get(ProfileUpdateViewModel::class.java)
+        binding.viewmodel = ViewModelProvider(this).get(ProfileUpdateViewModel::class.java)
 
         return binding.root
     }
@@ -72,13 +68,13 @@ class ProfileUpdateDialogFragment: DialogFragment() {
             }
         }
 
-        binding.editHeight.setOnFocusChangeListener { v, hasFocus ->
+        binding.editHeight.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus){
                 binding.editHeight.setSelection(binding.viewmodel?.height!!.length)
             }
         }
 
-        binding.editWeight.setOnFocusChangeListener { v, hasFocus ->
+        binding.editWeight.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus){
                 binding.editWeight.setSelection(binding.viewmodel?.weight!!.length)
             }
@@ -86,7 +82,7 @@ class ProfileUpdateDialogFragment: DialogFragment() {
 
     }
 
-    fun editCorrect():Boolean{
+    private fun editCorrect():Boolean{
         if (binding.editHeight.text.toString() != "") {
             if (binding.editHeight.text.toString().toInt() <= 100) {
                 ToastMessage.message(

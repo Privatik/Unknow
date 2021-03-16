@@ -3,13 +3,13 @@ package com.io.unknow.ui.fragment.twoviewpagerfragment
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ProgressBar
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.io.unknow.R
 import com.io.unknow.model.Chat
 import com.io.unknow.navigation.IPushTwoFragment
@@ -39,7 +39,7 @@ class  TwoViewPagerFragment : Fragment(), IPushTwoFragment{
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        viewModel = ViewModelProviders.of(this).get(TwoFieldViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(TwoFieldViewModel::class.java)
         return inflater.inflate(R.layout.fragment_messages, container, false)
     }
 
@@ -47,8 +47,8 @@ class  TwoViewPagerFragment : Fragment(), IPushTwoFragment{
         super.onViewCreated(view, savedInstanceState)
         Log.i("TwoField","onViewCreated")
 
-        loadingProgressBar = view.findViewById<ProgressBar>(R.id.loading_progress_bar)
-        layout = view.findViewById<FrameLayout>(R.id.messages_field)
+        loadingProgressBar = view.findViewById(R.id.loading_progress_bar)
+        layout = view.findViewById(R.id.messages_field)
 
         updateSwipe.update(this)
 

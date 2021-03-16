@@ -3,37 +3,25 @@ package com.io.unknow.ui.activity
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.ActivityManager
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.os.SystemClock
 import android.util.Log
-import android.view.View
-import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.viewpager.widget.ViewPager
-import androidx.viewpager2.widget.ViewPager2
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.io.unknow.R
 import com.io.unknow.adapter.ViewPagerAdapter
-import com.io.unknow.broadcast.NotificationListener
 import com.io.unknow.currentuser.CurrentUser
 import com.io.unknow.navigation.*
-import com.io.unknow.push.PushNotification
 import com.io.unknow.util.Setting
-import java.lang.NullPointerException
 import java.util.*
 
 private val TAG = MainActivity::class.simpleName
 private const val MY_PERMISSIONS_REQUEST = 1234
-private val PERMISSIONS = arrayOf<String>(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
+private val PERMISSIONS = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
 class MainActivity : AppCompatActivity() , IMainExit , IScrooll, ISetting, IUpdateSwipe, IUpdateActivity {
 
     private lateinit var mFirebaseAnalytics: FirebaseAnalytics
@@ -54,7 +42,7 @@ class MainActivity : AppCompatActivity() , IMainExit , IScrooll, ISetting, IUpda
         viewPager = findViewById(R.id.pager)
         viewPager?.adapter = ViewPagerAdapter(this, intent.getIntExtra("scroll", 0))
 
-        viewPager?.setOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+        viewPager?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {}
 
             override fun onPageScrolled(
@@ -81,11 +69,12 @@ class MainActivity : AppCompatActivity() , IMainExit , IScrooll, ISetting, IUpda
         finish()
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun isScrollPager(isPager: Boolean) {
         if (isPager) {
             viewPager?.setOnTouchListener(null)
         } else {
-            viewPager?.setOnTouchListener { v, event ->
+            viewPager?.setOnTouchListener { _, _ ->
                 return@setOnTouchListener true
             }
         }

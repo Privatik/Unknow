@@ -15,11 +15,10 @@ import com.io.unknow.navigation.IUpdateDialog
 
 class DialogWithUserViewModel : ViewModel() {
     val liveData = DialogWithUserLiveData()
-    val liveDataOnline = OnlineLiveData()
     private lateinit var dialogWithUserModel: DialogWithUserModel
 
     fun loadMessages(chat: Chat, userId: String, updateDialog: IUpdateDialog){
-        dialogWithUserModel = DialogWithUserModel(liveData, liveDataOnline, chat.messages, userId, updateDialog)
+        dialogWithUserModel = DialogWithUserModel(liveData, chat.messages, userId, updateDialog)
     }
 
     fun initAdapter(adapter: DialogAdapter){

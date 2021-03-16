@@ -9,6 +9,9 @@ import com.google.firebase.database.ValueEventListener
 import com.io.unknow.app.App
 import com.io.unknow.livedata.TwoFieldLiveData
 import com.io.unknow.model.Chat
+import com.io.unknow.model.IMessage
+import com.io.unknow.model.MessageImage
+import com.io.unknow.model.MessageText
 import javax.inject.Inject
 
 class TwoFieldModel(liveData: TwoFieldLiveData) {
@@ -25,11 +28,24 @@ class TwoFieldModel(liveData: TwoFieldLiveData) {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val map = mutableMapOf<String, Chat>()
                 for (value in snapshot.children){
-                    map[value.key!!] = value.getValue(Chat::class.java)!!
 
-                    Log.i("Message","This is id messages ${map[value.key!!]!!.messages} ${map[value.key!!]!!.last_message}")
+                   val chat = Chat(messages = value.child("messages").getValue(String::class.java)!!,
+                       last_message = getMessage(value.child("last_message")),
+                       readNow = value.child("readNow").getValue(Boolean::class.java)!!)
+
+                    Log.i("Message","This is id messages $chat")
+
+                    map[value.key!!] = chat
                 }
                 liveData.loadMessages(map)
+            }
+
+            private fun getMessage(messageShot: DataSnapshot): IMessage {
+                return if (messageShot.child("text").value != null){
+                    messageShot.getValue(MessageText::class.java)!!
+                } else {
+                    messageShot.getValue(MessageImage::class.java)!!
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {

@@ -1,26 +1,22 @@
 package com.io.unknow.parse
 
-import android.util.Log
-import androidx.core.util.TimeUtils
 import java.text.SimpleDateFormat
-import java.time.Duration
-import java.time.LocalDate
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 class DataParse {
 
     companion object{
+        private val simpleDate = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+        private val simpleAllDate = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
+
         fun getString(date: Date):String{
-            val df = SimpleDateFormat("yyyy-MM-dd")
+            val df = simpleAllDate
             return df.format(date)
         }
 
         fun getYear(ageUser: String):Int{
             val now = Date()
-            val ageUser = SimpleDateFormat("yyyy-MM-dd").parse(ageUser)!!
-
-            return getAge(ageUser,now)
+            return getAge(simpleDate.parse(ageUser)!!,now)
         }
 
         private fun getAge(myDate: Date,nowDate: Date):Int{
@@ -39,16 +35,16 @@ class DataParse {
     }
 
     fun getData(date: String):Date{
-        return SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(date)
+        return simpleAllDate.parse(date)
     }
 
     fun getStringNow():String{
-        val df = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        val df = simpleAllDate
         return df.format(Date())
     }
 
     fun getString(date: Date):String{
-        val df = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        val df = simpleAllDate
         return df.format(date)
     }
 

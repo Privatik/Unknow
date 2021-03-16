@@ -42,6 +42,6 @@ class EditMessageDialogFragment: DialogFragment() {
             }
         }
 
-        val delete = view.findViewById<Button>(R.id.delete)
+        view.findViewById<Button>(R.id.delete)
     }
 }

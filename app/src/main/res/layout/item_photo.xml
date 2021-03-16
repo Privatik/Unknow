@@ -1,13 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/item_photo"
     android:layout_width="120dp"
-    android:layout_height="120dp">
+    android:layout_height="120dp"
+    android:background="@drawable/background_data_item">
 
     <ImageView
         android:id="@+id/photo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/ic_baseline_photo_camera_24"/>
+        android:src="@drawable/ic_baseline_photo_camera_24"
+       />
+
+    <TextView
+        android:id="@+id/selected_photo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        style="@style/background_custom"
+        android:alpha="0.5"
+        android:visibility="gone"/>
 
 </FrameLayout>

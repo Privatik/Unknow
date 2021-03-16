@@ -1,5 +1,6 @@
 package com.io.unknow.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,8 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.io.unknow.R
 import com.io.unknow.model.Chat
+import com.io.unknow.model.MessageImage
+import com.io.unknow.model.MessageText
 import com.io.unknow.ui.activity.DialogActivity
 
 class AdapterChats(private val map: MutableMap<String, Chat>,val fragment: Fragment) : RecyclerView.Adapter<AdapterChats.ItemChat>() {
@@ -45,6 +48,7 @@ class AdapterChats(private val map: MutableMap<String, Chat>,val fragment: Fragm
             itemView.findViewById<ConstraintLayout>(R.id.content).setOnClickListener(this)
         }
 
+        @SuppressLint("SetTextI18n")
         fun initer(userId: String, chat: Chat){
             id.text = userId
 
@@ -55,10 +59,21 @@ class AdapterChats(private val map: MutableMap<String, Chat>,val fragment: Fragm
             }
 
             if (chat.last_message != null){
-                if (userId == chat.last_message?.userId)
-                    message.text = chat.last_message?.text
+                if (userId == chat.last_message?.userId) {
+                    if (chat.last_message is MessageText) {
+                        message.text = (chat.last_message as MessageText).text
+                    }
+                    else if (chat.last_message is MessageImage) {
+                        message.text = "Фотография"
+                    }
+                }
                 else{
-                    message.text = "Вы:  " +  chat.last_message?.text
+                    if (chat.last_message is MessageText) {
+                        message.text = "Вы:  " +  (chat.last_message as MessageText).text
+                    }
+                    else if (chat.last_message is MessageImage) {
+                        message.text = "Вы: Фотография"
+                    }
                 }
             }
         }

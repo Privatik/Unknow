@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import com.io.unknow.currentuser.CurrentUser
 import com.io.unknow.databinding.FragmentProfileBinding
 import com.io.unknow.navigation.*
@@ -58,7 +57,7 @@ class ProfileFragment(val exit: IExit? = null) : Fragment(), IUpdateUser, IPushP
             if (arguments?.getInt("scroll") == 0) throw KotlinNullPointerException("Y equals 0")
             binding.scrollview.viewTreeObserver.addOnGlobalLayoutListener (scrollListener)
         }catch (e: KotlinNullPointerException){
-            Log.i("ProfileFragment", e.message)
+            Log.i("ProfileFragment", "${e.message}")
         }
 
       if (CurrentUser.user != null) {
@@ -119,7 +118,7 @@ class ProfileFragment(val exit: IExit? = null) : Fragment(), IUpdateUser, IPushP
 
     override fun scrollViewGetY(): Int = binding.scrollview.scrollY
 
-    val scrollListener = OnGlobalLayoutListener {
+    private val scrollListener = OnGlobalLayoutListener {
         binding.scrollview.post {
             binding.scrollview.scrollTo(
                 0,

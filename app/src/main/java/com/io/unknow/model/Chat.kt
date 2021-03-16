@@ -4,6 +4,6 @@ import java.io.Serializable
 
 data class Chat(
     val messages: String = "",
-    var last_message: Message? = null,
+    var last_message: IMessage? = null,
     var readNow: Boolean = false
 ):Serializable

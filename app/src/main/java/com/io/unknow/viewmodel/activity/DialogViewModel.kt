@@ -1,21 +1,29 @@
 package com.io.unknow.viewmodel.activity
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
+import android.os.Build
 import android.provider.MediaStore
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import com.io.unknow.firebase.DialogActivityModel
+import com.io.unknow.livedata.OnlineLiveData
 import com.io.unknow.model.Chat
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 
 class DialogViewModel: ViewModel() {
 
     var isPhotoLoad = false
-    val dialogActivityModel = DialogActivityModel()
+    val liveDataOnline = OnlineLiveData()
+    private val dialogActivityModel = DialogActivityModel(liveDataOnline)
 
+    val sparedFlow = MutableSharedFlow<String>()
 
+    @RequiresApi(Build.VERSION_CODES.Q)
+    @SuppressLint("Recycle")
     fun getCameraImages(context: Context): List<String> {
         val uri: Uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         val cursor: Cursor?
@@ -37,4 +45,6 @@ class DialogViewModel: ViewModel() {
     }
 
     fun getChat(userId: String): Flow<Chat>  = dialogActivityModel.getChat(userId = userId)
+
+    fun online(userId: String){ dialogActivityModel.onlineUser(userId = userId) }
 }

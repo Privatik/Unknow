@@ -9,22 +9,22 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.io.unknow.adapter.DialogAdapter
 import com.io.unknow.databinding.ChatLayoutBinding
+import com.io.unknow.decoration.DateItemDecoration
 import com.io.unknow.model.Chat
 import com.io.unknow.navigation.IBottomSheet
 import com.io.unknow.navigation.ILoadImageFromGallery
 import com.io.unknow.navigation.IUpdateDialog
-import com.io.unknow.util.UpdateDateToolbar
+import com.io.unknow.ui.activity.DialogActivity
 import com.io.unknow.viewmodel.dialogfragment.DialogWithUserViewModel
 
-private const val GALLERY = "Gallery"
 class DialogWithUserFragment: Fragment() , IUpdateDialog, ILoadImageFromGallery {
 
     private lateinit var binding: ChatLayoutBinding
     private var mContext: Context? = null
     private lateinit var buttomSheet: IBottomSheet
+    private var isTakeImages: Boolean = false
 
     companion object {
         private const val ID_CHAT = "chat"
@@ -50,13 +50,6 @@ class DialogWithUserFragment: Fragment() , IUpdateDialog, ILoadImageFromGallery 
         buttomSheet = context as IBottomSheet
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        //setStyle(STYLE_NORMAL, R.style.FullScreenDialogStyle)
-
-
-    }
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -80,73 +73,59 @@ class DialogWithUserFragment: Fragment() , IUpdateDialog, ILoadImageFromGallery 
 
 
         binding.viewModel!!.loadMessages(chat, userId, this)
-        binding.name.text = userId
 
-
-        binding.field.send.setOnClickListener {
-            if (binding.field.edit.text.trim().isNotEmpty()) {
-                binding.viewModel?.sendMessageText(binding.field.edit.text.toString())
-                binding.field.edit.setText("")
+        binding.send.setOnClickListener {
+            Log.i("GALLERY","$isTakeImages")
+            if (isTakeImages) {
+                val activity = activity as DialogActivity
+                if (activity.imagesSelected.isNotEmpty()) {
+                    sendImages(activity.imagesSelected)
+                    buttomSheet.closeBottomSheet()
+                    activity.imagesSelected.clear()
+                }
+            }else if (binding.edit.text.trim().isNotEmpty()) {
+                binding.viewModel?.sendMessageText(message = binding.edit.text.toString())
+                binding.edit.setText("")
             }
         }
 
 
-        binding.field.add.setOnClickListener {
+        binding.add.setOnClickListener {
               buttomSheet.loadBottomSheet()
         }
 
-        buttomSheet.loadInterfaceForLoadImages(this)
+        buttomSheet.loadInterfaceForLoadImages(loadImageFromGallery = this, sendButton =  binding.send)
 
-
-        binding.back.setOnClickListener { activity?.onBackPressed() }
 
         Log.i(TAG, "onCreateView")
 
 
-        initLifeData(userId)
+        initLiveData(userId)
     }
 
 
-    private fun initLifeData(userId: String){
+    private fun initLiveData(userId: String){
         var adapter: DialogAdapter?
         binding.viewModel!!.liveData.observeForever { list ->
             adapter = DialogAdapter(mContext!!, list, userId, childFragmentManager)
             binding.viewModel!!.initAdapter(adapter!!)
-            initRecycleView(adapter!!)
+            initRecycleView()
 
-            binding.field.recyclerviewMessages.adapter = adapter
+            binding.recyclerviewMessages.adapter = adapter
+            binding.recyclerviewMessages.apply {addItemDecoration(DateItemDecoration(this, adapter!!))}
 
             binding.viewModel!!.loadCallback()
             Log.i("LoadDialog", "init adapter")
-            // recyclerView.smoothScrollToPosition(adapter!!.itemCount - 1)
-        }
-
-        binding.viewModel!!.liveDataOnline.observeForever {
-            binding.status.text = if (it) "online" else "offline"
         }
 
     }
 
-    private fun initRecycleView(adapter: DialogAdapter){
+    private fun initRecycleView(){
         val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         layoutManager.stackFromEnd = true
-        binding.field.recyclerviewMessages.layoutManager = layoutManager
-        binding.field.recyclerviewMessages.hasFixedSize()
+        binding.recyclerviewMessages.layoutManager = layoutManager
+        binding.recyclerviewMessages.hasFixedSize()
 
-        val updateDateToolbar = UpdateDateToolbar(mContext!!, adapter, layoutManager)
-        binding.field.recyclerviewMessages.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            private var date: String = ""
-
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-
-                date = updateDateToolbar.onScroll(date)
-
-                if (layoutManager.findFirstVisibleItemPosition() == 0){
-                    binding.viewModel?.loadCallback()
-                }
-            }
-        })
     }
 
     override fun onStart() {
@@ -166,7 +145,7 @@ class DialogWithUserFragment: Fragment() , IUpdateDialog, ILoadImageFromGallery 
     }
 
     override fun update(size: Int) {
-        binding.field.recyclerviewMessages.smoothScrollToPosition(size)
+        binding.recyclerviewMessages.smoothScrollToPosition(size)
     }
 
     override fun sendImages(imagesList: List<String>) {
@@ -176,7 +155,12 @@ class DialogWithUserFragment: Fragment() , IUpdateDialog, ILoadImageFromGallery 
     }
 
     override fun sendImage(imageUrl: String) {
+        Log.i("CAMERA","sendImage")
         binding.viewModel?.sendMessagePhoto(imageUrl)
+    }
+
+    override fun isChangeBooleanSend(isChange: Boolean) {
+        isTakeImages = isChange
     }
 
 }

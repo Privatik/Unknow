@@ -10,7 +10,8 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.io.unknow.app.App
-import com.io.unknow.model.Message
+import com.io.unknow.model.IMessage
+import com.io.unknow.model.MessageText
 import com.io.unknow.model.NotificationMessage
 import com.io.unknow.service.MessageService
 import javax.inject.Inject
@@ -37,9 +38,9 @@ class NotificationListener : BroadcastReceiver() {
                 for (userMessages in snapshot.children){
                     val notificationMessage = NotificationMessage(userMessages.key!!)
                     for (messageSnapshot in userMessages.children){
-                        val message = messageSnapshot.getValue(Message::class.java)!!
-                        notificationMessage.messageBigText += "${message.text} \n\n"
-                        notificationMessage.lastMessage = message.text
+                        val message = messageSnapshot.getValue(IMessage::class.java)!!
+                        notificationMessage.messageBigText += "${if (message is MessageText) message.text else "Фотография"} \n\n"
+                        notificationMessage.lastMessage = if (message is MessageText) message.text else "Фотография"
                         //messageSnapshot.ref.removeValue()
                     }
                     notificationMessage.messageBigText = notificationMessage.messageBigText.trim()

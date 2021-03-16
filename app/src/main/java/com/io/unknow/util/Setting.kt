@@ -4,14 +4,12 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import com.io.unknow.app.App
 import java.util.*
 
 private const val LANGUAGE = "language"
 private const val THEME = "theme"
-private const val SETTING = "setting"
 object Setting {
     private lateinit var sp: SharedPreferences
 
@@ -46,7 +44,7 @@ object Setting {
             Log.i("Setting",language)
           //  if (Locale.getDefault().language == language) return
 
-            val myLocale = Locale(language!!)
+            val myLocale = Locale(language)
 
             Locale.setDefault(myLocale)
             val config = Configuration()
@@ -63,5 +61,6 @@ object Setting {
     }
 
     fun getLocateLanguage():String =
-        sp.getString(LANGUAGE, Locale.getDefault().language.toLowerCase()).toString()
+        sp.getString(LANGUAGE, Locale.getDefault().language.toLowerCase(Locale.getDefault()))
+            .toString()
 }

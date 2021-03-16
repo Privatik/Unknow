@@ -1,25 +1,18 @@
 package com.io.unknow.util
 
-import android.content.Context
-import android.util.Log
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.io.unknow.adapter.DialogAdapter
-import com.io.unknow.parse.CalendarParse
+import com.io.unknow.model.IMessage
+import com.io.unknow.model.MessageDate
 
-class UpdateDateToolbar(val mContext: Context, val adapter: DialogAdapter?,val layoutManager: LinearLayoutManager) {
+object UpdateDateToolbar {
 
-    fun onScroll(date: String): String{
-        var dateNew = date
+    private var date: String = ""
 
-        if (adapter != null) {
-            val message = adapter.getMessage(layoutManager.findLastVisibleItemPosition())
-            if (dateNew != message.time.substring(0,10)){
-                ToastMessage.topMessage(mContext, message.time.substring(8, 10) + CalendarParse.getMounth(message.time.substring(5, 8)))
-                dateNew = message.time.substring(0,10)
-            }
+    fun onChangeDate(IMessage: IMessage): MessageDate?{
+        val currentDate = IMessage.time.substring(0,10)
+        if (date != currentDate) {
+            date = currentDate
+            return MessageDate(time = currentDate)
         }
-        Log.i("RecycleViw","Scroll down ${layoutManager.findFirstVisibleItemPosition()} ${layoutManager.findLastVisibleItemPosition()}")
-
-        return dateNew
+        return null
     }
 }

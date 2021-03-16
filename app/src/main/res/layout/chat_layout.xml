@@ -12,72 +12,57 @@
     android:id="@+id/content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    style="@style/background"
     android:orientation="vertical">
 
-    <androidx.appcompat.widget.Toolbar
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:elevation="3dp"
-        app:contentInsetStart="0dp">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            style="@style/background_item"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerview_messages"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            style="@style/background_item"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="4dp"
+            android:gravity="center"
+            android:layout_gravity="center">
 
             <ImageButton
-                android:id="@+id/back"
+                android:id="@+id/add"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_marginStart="6dp"
-                android:layout_marginLeft="5dp"
-                android:background="@android:color/transparent"
-                android:src="@drawable/ic_back"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:src="@drawable/ic_add_24"
+                android:layout_marginStart="4dp"
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/icon"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:src="@mipmap/icon"
-                app:civ_border_color="@color/circle"
-                app:civ_border_width="1dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/back"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:background="@android:color/transparent" />
 
-            <TextView
-                android:id="@+id/name"
-                style="@style/textView"
+            <EditText
+                android:id="@+id/edit"
+                android:layout_width="0dp"
+                android:textCursorDrawable="@drawable/cursor_white"
+                android:layout_height="wrap_content"
+                android:hint="@string/edit_message"
+                android:paddingStart="0dp"
+                android:paddingEnd="10dp"
+                style="@style/editText"
+                android:inputType="textNoSuggestions"
+                android:layout_marginStart="4dp"
+                android:layout_weight="1"/>
+
+            <ImageButton
+                android:id="@+id/send"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
-                android:layout_marginLeft="6dp"
-                android:layout_marginTop="6dp"
-                android:textSize="13sp"
-                app:layout_constraintStart_toEndOf="@+id/icon"
-                app:layout_constraintTop_toTopOf="@+id/icon" />
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:padding="5dp"
+                android:src="@drawable/ic_send"
+                style="@style/background_custom" />
 
-            <TextView
-                android:id="@+id/status"
-                style="@style/background_hint"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                app:layout_constraintStart_toStartOf="@+id/name"
-                app:layout_constraintTop_toBottomOf="@+id/name" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-    </androidx.appcompat.widget.Toolbar>
-
-   <include android:id="@+id/field" layout="@layout/include_field_chat_layout" app:viewModel = "@{viewModel}"/>
-
+        </LinearLayout>
 </LinearLayout>
 </layout>

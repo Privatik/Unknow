@@ -22,8 +22,8 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="4dp"
-        style="@style/background"/>
+        android:layout_height="2dp"
+        style="@style/background_custom"/>
 
     <Button
         android:id="@+id/camera"
@@ -35,22 +35,20 @@
         android:layout_marginTop="10dp"
         android:text="@string/camera" />
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/gallery"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="3dp"
+        android:layout_gravity="center"
         />
 
-    <Button
-        android:id="@+id/send_photos"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/to_send"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="3dp"
-        android:visibility="gone"
-        style="@style/button"/>
+    </FrameLayout>
 
 
 

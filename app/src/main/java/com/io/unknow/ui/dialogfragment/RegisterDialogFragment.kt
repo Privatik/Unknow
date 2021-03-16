@@ -1,14 +1,17 @@
 package com.io.unknow.ui.dialogfragment
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Button
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.io.unknow.R
 import com.io.unknow.databinding.FragmentRegisterBinding
 import com.io.unknow.model.User
@@ -17,7 +20,6 @@ import com.io.unknow.parse.DataParse
 import com.io.unknow.util.ToastMessage.message
 import com.io.unknow.viewmodel.dialogfragment.RegisterViewModel
 import java.util.*
-import kotlin.random.Random
 
 class RegisterDialogFragment: DialogFragment(){
 
@@ -43,7 +45,7 @@ class RegisterDialogFragment: DialogFragment(){
         dialog?.window!!.setBackgroundDrawableResource(android.R.color.transparent)
 
         binding = FragmentRegisterBinding.inflate(inflater,container,false)
-        binding.viewmodel = ViewModelProviders.of(this).get(RegisterViewModel::class.java)
+        binding.viewmodel = ViewModelProvider(this).get(RegisterViewModel::class.java)
 
         return binding.root
     }
@@ -51,10 +53,9 @@ class RegisterDialogFragment: DialogFragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val radioButtonMen = view.findViewById<RadioButton>(R.id.men)
-        val radioButtonWomen = view.findViewById<RadioButton>(R.id.women)
-
-        val radioGroup = view.findViewById<RadioGroup>(R.id.radioGroup)
+        view.findViewById<RadioButton>(R.id.men)
+        view.findViewById<RadioButton>(R.id.women)
+        view.findViewById<RadioGroup>(R.id.radioGroup)
 
         initButton(view.findViewById(R.id.back))
         initButton(view.findViewById(R.id.register))
@@ -105,6 +106,7 @@ class RegisterDialogFragment: DialogFragment(){
     }
 
 
+    @SuppressLint("ClickableViewAccessibility")
     fun initButton(button: Button){
         button.setOnClickListener {
             if (button.id == R.id.back) {
@@ -122,7 +124,7 @@ class RegisterDialogFragment: DialogFragment(){
             }
         }
 
-        button.setOnTouchListener { v, event ->
+        button.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
                 button.isSelected = true
             }

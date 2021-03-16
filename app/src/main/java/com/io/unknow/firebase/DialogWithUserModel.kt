@@ -1,5 +1,6 @@
 package com.io.unknow.firebase
 
+import android.net.Uri
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
@@ -7,13 +8,13 @@ import com.google.firebase.storage.StorageReference
 import com.io.unknow.adapter.DialogAdapter
 import com.io.unknow.app.App
 import com.io.unknow.livedata.DialogWithUserLiveData
-import com.io.unknow.livedata.OnlineLiveData
-import com.io.unknow.model.Message
-import com.io.unknow.model.TypeMessage
+import com.io.unknow.model.IMessage
+import com.io.unknow.model.MessageImage
+import com.io.unknow.model.MessageText
 import com.io.unknow.navigation.IUpdateDialog
 import com.io.unknow.parse.DataParse
+import com.io.unknow.util.UpdateDateToolbar
 import java.io.File
-import java.io.FileInputStream
 import javax.inject.Inject
 
 
@@ -22,7 +23,7 @@ private const val LAST_MESSAGE = "last_message"
 private const val CHATS = "chats"
 private const val MESSAGES = "messages"
 private const val count = 50
-class DialogWithUserModel(private val liveData: DialogWithUserLiveData,val liveDataOnline: OnlineLiveData, messageId: String,val userId: String,val updateDialog: IUpdateDialog) {
+class DialogWithUserModel(private val liveData: DialogWithUserLiveData, messageId: String,val userId: String,val updateDialog: IUpdateDialog) {
 
     @Inject lateinit var mAuth: FirebaseAuth
     @Inject lateinit var base: DatabaseReference
@@ -35,19 +36,21 @@ class DialogWithUserModel(private val liveData: DialogWithUserLiveData,val liveD
     private val baseNotification: DatabaseReference
     private val baseUser: DatabaseReference
     private val baseMy: DatabaseReference
+    private val filesPhotos: StorageReference
     private val dataParse = DataParse()
     lateinit var adapter: DialogAdapter
 
     init {
         App.appComponent.inject(this)
 
-        onlineUser()
-
         baseMessages = base.child(MESSAGES).child(messageId)
         liveData.load(mutableListOf())
 
+        filesPhotos = storage.child(mAuth.currentUser!!.uid).child("photos")
+
         baseMy = base.child(CHATS).child(mAuth.currentUser!!.uid).child(userId)
         baseUser = base.child(CHATS).child(userId).child(mAuth.currentUser!!.uid)
+
         baseNotification = base.child("notification").child(userId).child(mAuth.currentUser!!.uid)
         inviteCallback()
         baseUser.child(READ).addValueEventListener(object : ValueEventListener{
@@ -73,13 +76,23 @@ class DialogWithUserModel(private val liveData: DialogWithUserLiveData,val liveD
 
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 Log.i("AdapterDialog", "onChildAdded")
-                val message = snapshot.getValue(Message::class.java)!!
-                liveData.addMessage(message)
+                val message = getMessage(snapshot)
+
                 if (isWritePermission) {
                     baseMy.child(LAST_MESSAGE).setValue(message)
                     baseUser.child(LAST_MESSAGE).setValue(message)
                 }
+                liveData.addMessage(UpdateDateToolbar.onChangeDate(message))
+                liveData.addMessage(message)
                 updateAllBase()
+            }
+
+            private fun getMessage(messageShot: DataSnapshot): IMessage {
+                return if (messageShot.child("text").value != null){
+                    messageShot.getValue(MessageText::class.java)!!
+                } else {
+                    messageShot.getValue(MessageImage::class.java)!!
+                }
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
@@ -98,10 +111,10 @@ class DialogWithUserModel(private val liveData: DialogWithUserLiveData,val liveD
     }
 
 
-    private fun postMessage(message: Message){
-        baseMessages.push().setValue(message)
+    private fun postMessage(IMessage: IMessage){
+        baseMessages.push().setValue(IMessage)
         if (!isReadUser){
-            baseNotification.push().setValue(message)
+            baseNotification.push().setValue(IMessage)
         }
         if (!isWritePermission){
             isWritePermission = true
@@ -109,27 +122,28 @@ class DialogWithUserModel(private val liveData: DialogWithUserLiveData,val liveD
     }
 
     fun createMessageText(message: String) {
-        val messageModel = Message(text = message,time =  dataParse.getStringNow(),userId =  mAuth.currentUser!!.uid)
+        val messageModel = MessageText(text = message,time =  dataParse.getStringNow(),userId =  mAuth.currentUser!!.uid)
 
-        messageModel.type = TypeMessage.TEXT
         messageModel.listViewMessage.add(userId)
         messageModel.listViewMessage.add(messageModel.userId)
 
         postMessage(messageModel)
     }
 
-    fun createMessageImage(messageUrl: String) {
+    fun createMessageImage(messageUrl: String){
+        createMessageImage(Uri.fromFile(File(messageUrl)))
+    }
 
+    fun createMessageImage(messageUrl: Uri) {
 
-        val stream = FileInputStream(File(messageUrl))
-
-        val uploadTask = storage.putStream(stream)
-        uploadTask.addOnFailureListener {  }.addOnSuccessListener { taskSnapshot ->
+        filesPhotos.putFile(messageUrl).addOnFailureListener {
+            Log.i("CAMERA","${it.message}")
+        }.addOnSuccessListener { taskSnapshot ->
             val downloadUrl = taskSnapshot.uploadSessionUri
 
-            val messageModel = Message(imageUrl = downloadUrl.toString(),time =  dataParse.getStringNow(),userId =  mAuth.currentUser!!.uid)
+            Log.i("CAMERA","onSuc")
+            val messageModel = MessageImage(uri = downloadUrl.toString(),time =  dataParse.getStringNow(),userId =  mAuth.currentUser!!.uid)
 
-            messageModel.type = TypeMessage.IMAGE
             messageModel.listViewMessage.add(userId)
             messageModel.listViewMessage.add(messageModel.userId)
 
@@ -141,15 +155,4 @@ class DialogWithUserModel(private val liveData: DialogWithUserLiveData,val liveD
         baseMy.child(READ).setValue(isRead)
     }
 
-
-    fun onlineUser(){
-        base.child("online").child(userId).addListenerForSingleValueEvent(object : ValueEventListener{
-            override fun onDataChange(snapshot: DataSnapshot) {
-                liveDataOnline.setOnline(snapshot.getValue(Boolean::class.java))
-            }
-
-            override fun onCancelled(error: DatabaseError) {}
-
-        })
-    }
 }
