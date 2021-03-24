@@ -45,4 +45,6 @@
     <string name="delete_for_everyone">Delete for everyone</string>
     <string name="camera">Camera</string>
     <string name="to_send">To send</string>
+    <string name="add">Add file</string>
+    <string name="configuration_delete">Delete for all</string>
 </resources>

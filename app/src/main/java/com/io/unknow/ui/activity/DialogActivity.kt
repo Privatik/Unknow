@@ -1,5 +1,6 @@
 package com.io.unknow.ui.activity
 
+import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -19,8 +20,8 @@ import com.io.unknow.R
 import com.io.unknow.adapter.AdapterGallery
 import com.io.unknow.databinding.ActivityDialogBinding
 import com.io.unknow.model.Chat
-import com.io.unknow.navigation.IBottomSheet
-import com.io.unknow.navigation.ILoadImageFromGallery
+import com.io.unknow.model.IMessage
+import com.io.unknow.navigation.*
 import com.io.unknow.parse.CameraParse
 import com.io.unknow.ui.fragment.DialogWithUserFragment
 import com.io.unknow.util.Setting
@@ -33,15 +34,18 @@ import kotlinx.coroutines.launch
 
 private const val REQUEST_TAKE_PHOTO = 1
 private const val GALLERY = "Gallery"
-class DialogActivity : AppCompatActivity(), IBottomSheet {
+class DialogActivity : AppCompatActivity(), IBottomSheet, IRedactModeActivity,
+    IDialogRedactMessage {
 
     private lateinit var binding: ActivityDialogBinding
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private val cameraParse by lazy{ CameraParse(this)}
 
     private lateinit var loadImageFromGallery: ILoadImageFromGallery
+    private lateinit var redactModeFragment: IRedactModeFragment
+    private lateinit var dialogRedactMessage: IDialogRedactMessage
     private lateinit var sendImages: ImageButton
-    private var isTakeImages: Boolean = false
+    private var isNotRedact: Boolean = true
 
     var imagesSelected: MutableList<String> = mutableListOf()
 
@@ -94,10 +98,15 @@ class DialogActivity : AppCompatActivity(), IBottomSheet {
             }
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                if (newState == 5){changeImageButtonOnSendText()}
+                Log.e("Close","$newState")
+                if (newState == 4){
+                    Log.e("Close","changeImage")
+                    changeImageButtonOnSendText()
+                }
             }
 
         })
+        bottomSheetBehavior.state = STATE_HIDDEN
 
         binding.bottomSheet.camera.setOnClickListener {
             loadCamera()
@@ -143,6 +152,7 @@ class DialogActivity : AppCompatActivity(), IBottomSheet {
         }
     }
 
+    @SuppressLint("NewApi")
     override fun loadBottomSheet() {
         if (!binding.viewModel!!.isPhotoLoad) {
             binding.bottomSheet.gallery.layoutManager = GridLayoutManager(this, 3)
@@ -188,12 +198,43 @@ class DialogActivity : AppCompatActivity(), IBottomSheet {
     }
 
     override fun onBackPressed() {
-        if (bottomSheetBehavior.state != STATE_HIDDEN){
-            closeBottomSheet()
+        when {
+            !isNotRedact -> {
+                redactModeOff()
+                Log.e("Exit","notRedact")
+            }
+            bottomSheetBehavior.state != STATE_HIDDEN -> {
+                closeBottomSheet()
+                Log.e("Exit","closeBottom ${bottomSheetBehavior.state} == $STATE_HIDDEN result: ${ bottomSheetBehavior.state != STATE_HIDDEN}")
+            }
+            else -> {
+                super.onBackPressed()
+            }
         }
-        else{
-            super.onBackPressed()
-        }
+    }
+
+    override fun redactModeOn() {
+        isNotRedact = false
+    }
+
+    override fun redactModeOff() {
+        isNotRedact = true
+        redactModeFragment.editModeClose()
+    }
+
+    override fun sendRedactModeFragment(redactModeFragment: IRedactModeFragment, dialogRedactMessage: IDialogRedactMessage) {
+        this.redactModeFragment = redactModeFragment
+        this.dialogRedactMessage = dialogRedactMessage
+    }
+
+    override fun isRedactOff(): Boolean = isNotRedact
+
+    override fun edit(message: IMessage) {
+        dialogRedactMessage.edit(message = message)
+    }
+
+    override fun delete(message: IMessage, isDeleteForAll: Boolean) {
+        dialogRedactMessage.delete(message = message,isDeleteForAll = isDeleteForAll)
     }
 
 

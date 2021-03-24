@@ -45,4 +45,6 @@
     <string name="delete_for_everyone">Удалить для всех</string>
     <string name="camera">Камера</string>
     <string name="to_send">Отправить</string>
+    <string name="add">Прикрепить файл</string>
+    <string name="configuration_delete">Удалить для всех</string>
 </resources>

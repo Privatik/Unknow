@@ -19,6 +19,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:elevation="3dp"
+        android:textSize="12sp"
         android:text="@{message.time}"
         android:textColor="@color/white"
         android:background="@drawable/background_data_item"

@@ -27,6 +27,7 @@
         android:textSize="@dimen/text_message_size"
         android:elevation="3dp"
         android:paddingBottom="10dp"
+        style="@style/background_dialog_title"
         android:textColor="@android:color/white"
         card_view:layout_constraintBottom_toBottomOf="parent"
         card_view:layout_constraintEnd_toEndOf="parent"

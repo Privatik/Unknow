@@ -1,7 +1,6 @@
 package com.io.unknow.decoration
 
 import android.graphics.Canvas
-import android.graphics.Rect
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View

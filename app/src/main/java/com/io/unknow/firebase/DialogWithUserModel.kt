@@ -13,8 +13,10 @@ import com.io.unknow.model.MessageImage
 import com.io.unknow.model.MessageText
 import com.io.unknow.navigation.IUpdateDialog
 import com.io.unknow.parse.DataParse
+import com.io.unknow.parse.MessageParse
 import com.io.unknow.util.UpdateDateToolbar
 import java.io.File
+import java.util.*
 import javax.inject.Inject
 
 
@@ -40,6 +42,8 @@ class DialogWithUserModel(private val liveData: DialogWithUserLiveData, messageI
     private val dataParse = DataParse()
     lateinit var adapter: DialogAdapter
 
+    private val keyMessages by lazy { mutableMapOf<String, IMessage>() }
+
     init {
         App.appComponent.inject(this)
 
@@ -52,7 +56,7 @@ class DialogWithUserModel(private val liveData: DialogWithUserLiveData, messageI
         baseUser = base.child(CHATS).child(userId).child(mAuth.currentUser!!.uid)
 
         baseNotification = base.child("notification").child(userId).child(mAuth.currentUser!!.uid)
-        inviteCallback()
+        base()
         baseUser.child(READ).addValueEventListener(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 isReadUser = snapshot.getValue(Boolean::class.java)!!
@@ -67,32 +71,26 @@ class DialogWithUserModel(private val liveData: DialogWithUserLiveData, messageI
     fun inviteCallback(){
         if (isWritePermission) isWritePermission = false
         countMessages += count
-
-        base()
     }
 
     private fun base(){
-        baseMessages.limitToLast(countMessages).addChildEventListener(object : ChildEventListener {
+        baseMessages.addChildEventListener(object : ChildEventListener {
 
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                Log.i("AdapterDialog", "onChildAdded")
-                val message = getMessage(snapshot)
+                Log.e("Message", "onChildAdded")
+                val message = MessageParse.getMessageFromShot(snapshot)
+                keyMessages[snapshot.key!!] = message
 
                 if (isWritePermission) {
                     baseMy.child(LAST_MESSAGE).setValue(message)
                     baseUser.child(LAST_MESSAGE).setValue(message)
                 }
-                liveData.addMessage(UpdateDateToolbar.onChangeDate(message))
-                liveData.addMessage(message)
-                updateAllBase()
-            }
 
-            private fun getMessage(messageShot: DataSnapshot): IMessage {
-                return if (messageShot.child("text").value != null){
-                    messageShot.getValue(MessageText::class.java)!!
-                } else {
-                    messageShot.getValue(MessageImage::class.java)!!
+                if (mAuth.currentUser!!.uid in message.listViewMessage) {
+                    liveData.addMessage(UpdateDateToolbar.onChangeDate(message))
+                    liveData.addMessage(message)
                 }
+                updateAllBase()
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
@@ -104,24 +102,31 @@ class DialogWithUserModel(private val liveData: DialogWithUserLiveData, messageI
             override fun onCancelled(error: DatabaseError) {}
 
             private fun updateAllBase() {
-                adapter.notifyDataSetChanged()
-                updateDialog.update(adapter.itemCount - 1)
+                val size = adapter.itemCount - 1
+                if (size != -1) {
+                    adapter.notifyDataSetChanged()
+                    updateDialog.update(size)
+                }
             }
         })
     }
 
 
-    private fun postMessage(IMessage: IMessage){
-        baseMessages.push().setValue(IMessage)
+    private fun postMessage(iMessage: IMessage){
+        baseMessages.push().setValue(iMessage)
         if (!isReadUser){
-            baseNotification.push().setValue(IMessage)
+            baseNotification.push().setValue(iMessage)
         }
         if (!isWritePermission){
             isWritePermission = true
         }
+
+        Log.e("Message","postMessage $iMessage")
     }
 
     fun createMessageText(message: String) {
+        Log.e("Message","createMessageText $message")
+
         val messageModel = MessageText(text = message,time =  dataParse.getStringNow(),userId =  mAuth.currentUser!!.uid)
 
         messageModel.listViewMessage.add(userId)
@@ -130,29 +135,65 @@ class DialogWithUserModel(private val liveData: DialogWithUserLiveData, messageI
         postMessage(messageModel)
     }
 
-    fun createMessageImage(messageUrl: String){
-        createMessageImage(Uri.fromFile(File(messageUrl)))
-    }
 
-    fun createMessageImage(messageUrl: Uri) {
+    fun createMessageImage(messageUrl: String) {
 
-        filesPhotos.putFile(messageUrl).addOnFailureListener {
-            Log.i("CAMERA","${it.message}")
-        }.addOnSuccessListener { taskSnapshot ->
-            val downloadUrl = taskSnapshot.uploadSessionUri
+        val file = filesPhotos.child("${UUID.randomUUID()}")
 
-            Log.i("CAMERA","onSuc")
-            val messageModel = MessageImage(uri = downloadUrl.toString(),time =  dataParse.getStringNow(),userId =  mAuth.currentUser!!.uid)
+        file.putFile(Uri.fromFile(File(messageUrl))).addOnSuccessListener {
 
-            messageModel.listViewMessage.add(userId)
-            messageModel.listViewMessage.add(messageModel.userId)
+            Log.i("CAMERA", "onSuc")
+            file.downloadUrl.addOnCompleteListener {
+                Log.i("CAMERA", "getDow")
+                val messageModel = MessageImage(
+                    imageUrl = it.result.toString(),
+                    time = dataParse.getStringNow(),
+                    userId = mAuth.currentUser!!.uid
+                )
 
-            postMessage(messageModel)
+                messageModel.listViewMessage.add(userId)
+                messageModel.listViewMessage.add(messageModel.userId)
+
+                postMessage(messageModel)
             }
+
+        }.addOnFailureListener {
+            Log.i("CAMERA", "${it.message}")
+        }
+
+
     }
 
-    fun changeDialog(isRead: Boolean){
-        baseMy.child(READ).setValue(isRead)
-    }
+        fun changeDialog(isRead: Boolean) {
+            baseMy.child(READ).setValue(isRead)
+        }
 
+        fun deleteMessage(message: IMessage, isDeleteForAll: Boolean) {
+            if (message is MessageImage) {
+
+            }
+
+            val deleteMessage =
+                baseMessages.child(keyMessages.filter { it.value == message }.keys.first())
+            if (isDeleteForAll) {
+                deleteMessage.removeValue()
+            } else {
+                deleteMessage.child("listViewMessage")
+                    .addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onCancelled(error: DatabaseError) {
+                            Log.i("Delete", error.message)
+                        }
+
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            for (numberUser in snapshot.children) {
+                                if (numberUser.value == mAuth.currentUser!!.uid) {
+                                    deleteMessage.child("listViewMessage").child(numberUser.key!!)
+                                        .removeValue()
+                                }
+                            }
+                        }
+                    }
+                    )
+            }
+        }
 }

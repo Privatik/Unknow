@@ -12,19 +12,21 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.io.unknow.adapter.DialogAdapter
 import com.io.unknow.databinding.ChatLayoutBinding
 import com.io.unknow.decoration.DateItemDecoration
+import com.io.unknow.decoration.TwoDateItemDecoration
 import com.io.unknow.model.Chat
-import com.io.unknow.navigation.IBottomSheet
-import com.io.unknow.navigation.ILoadImageFromGallery
-import com.io.unknow.navigation.IUpdateDialog
+import com.io.unknow.model.IMessage
+import com.io.unknow.model.MessageText
+import com.io.unknow.navigation.*
 import com.io.unknow.ui.activity.DialogActivity
 import com.io.unknow.viewmodel.dialogfragment.DialogWithUserViewModel
 
-class DialogWithUserFragment: Fragment() , IUpdateDialog, ILoadImageFromGallery {
+class DialogWithUserFragment: Fragment() , IUpdateDialog, ILoadImageFromGallery, IDialogRedactMessage, IRedactModeFragment {
 
     private lateinit var binding: ChatLayoutBinding
     private var mContext: Context? = null
     private lateinit var buttomSheet: IBottomSheet
     private var isTakeImages: Boolean = false
+    private lateinit var redactMode: IRedactModeActivity
 
     companion object {
         private const val ID_CHAT = "chat"
@@ -48,6 +50,7 @@ class DialogWithUserFragment: Fragment() , IUpdateDialog, ILoadImageFromGallery 
         mContext = context
 
         buttomSheet = context as IBottomSheet
+        redactMode = context as IRedactModeActivity
     }
 
 
@@ -71,6 +74,7 @@ class DialogWithUserFragment: Fragment() , IUpdateDialog, ILoadImageFromGallery 
         val chat: Chat = arguments?.getSerializable(ID_CHAT) as Chat
         val userId: String = arguments?.getString(ID_USER)!!
 
+        redactMode.sendRedactModeFragment(this,this)
 
         binding.viewModel!!.loadMessages(chat, userId, this)
 
@@ -81,7 +85,6 @@ class DialogWithUserFragment: Fragment() , IUpdateDialog, ILoadImageFromGallery 
                 if (activity.imagesSelected.isNotEmpty()) {
                     sendImages(activity.imagesSelected)
                     buttomSheet.closeBottomSheet()
-                    activity.imagesSelected.clear()
                 }
             }else if (binding.edit.text.trim().isNotEmpty()) {
                 binding.viewModel?.sendMessageText(message = binding.edit.text.toString())
@@ -91,7 +94,9 @@ class DialogWithUserFragment: Fragment() , IUpdateDialog, ILoadImageFromGallery 
 
 
         binding.add.setOnClickListener {
-              buttomSheet.loadBottomSheet()
+            if (redactMode.isRedactOff()) {
+                buttomSheet.loadBottomSheet()
+            }
         }
 
         buttomSheet.loadInterfaceForLoadImages(loadImageFromGallery = this, sendButton =  binding.send)
@@ -107,12 +112,17 @@ class DialogWithUserFragment: Fragment() , IUpdateDialog, ILoadImageFromGallery 
     private fun initLiveData(userId: String){
         var adapter: DialogAdapter?
         binding.viewModel!!.liveData.observeForever { list ->
-            adapter = DialogAdapter(mContext!!, list, userId, childFragmentManager)
+            adapter = DialogAdapter(mContext!!, list, userId, childFragmentManager, redactMode.isRedactOff())
             binding.viewModel!!.initAdapter(adapter!!)
             initRecycleView()
 
             binding.recyclerviewMessages.adapter = adapter
-            binding.recyclerviewMessages.apply {addItemDecoration(DateItemDecoration(this, adapter!!))}
+
+
+            binding.recyclerviewMessages.apply {addItemDecoration(
+               // DateItemDecoration(this, adapter!!)
+               TwoDateItemDecoration(binding.recyclerviewMessages, true, adapter!!.isHeader)
+            )}
 
             binding.viewModel!!.loadCallback()
             Log.i("LoadDialog", "init adapter")
@@ -161,6 +171,24 @@ class DialogWithUserFragment: Fragment() , IUpdateDialog, ILoadImageFromGallery 
 
     override fun isChangeBooleanSend(isChange: Boolean) {
         isTakeImages = isChange
+    }
+
+    override fun edit(message: IMessage) {
+        if (message is MessageText) {
+            binding.editMessage.visibility = View.VISIBLE
+            binding.edit.setText(message.text)
+        }
+
+        redactMode.redactModeOn()
+    }
+
+    override fun delete(message: IMessage, isDeleteForAll: Boolean) {
+
+    }
+
+    override fun editModeClose() {
+        binding.editMessage.visibility = View.GONE
+        binding.edit.setText("")
     }
 
 }
