@@ -11,22 +11,24 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.io.unknow.adapter.DialogAdapter
 import com.io.unknow.databinding.ChatLayoutBinding
-import com.io.unknow.decoration.DateItemDecoration
 import com.io.unknow.decoration.TwoDateItemDecoration
 import com.io.unknow.model.Chat
 import com.io.unknow.model.IMessage
 import com.io.unknow.model.MessageText
 import com.io.unknow.navigation.*
 import com.io.unknow.ui.activity.DialogActivity
-import com.io.unknow.viewmodel.dialogfragment.DialogWithUserViewModel
+import com.io.unknow.viewmodel.fragment.DialogWithUserViewModel
 
-class DialogWithUserFragment: Fragment() , IUpdateDialog, ILoadImageFromGallery, IDialogRedactMessage, IRedactModeFragment {
+class DialogWithUserFragment: Fragment() , IUpdateDialog, ILoadImageFromGallery, IDialogRedactMessage<IMessage>, IRedactModeFragment {
 
     private lateinit var binding: ChatLayoutBinding
     private var mContext: Context? = null
     private lateinit var buttomSheet: IBottomSheet
     private var isTakeImages: Boolean = false
     private lateinit var redactMode: IRedactModeActivity
+
+
+    private var messageRefactor: MessageText? = null
 
     companion object {
         private const val ID_CHAT = "chat"
@@ -35,7 +37,7 @@ class DialogWithUserFragment: Fragment() , IUpdateDialog, ILoadImageFromGallery,
 
         fun newInstance(chat: Chat, userId: String): DialogWithUserFragment {
             val args = Bundle()
-            args.putSerializable(ID_CHAT, chat)
+            args.putParcelable(ID_CHAT, chat)
             args.putString(ID_USER, userId)
 
             Log.i(TAG, "newInst")
@@ -71,7 +73,7 @@ class DialogWithUserFragment: Fragment() , IUpdateDialog, ILoadImageFromGallery,
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val chat: Chat = arguments?.getSerializable(ID_CHAT) as Chat
+        val chat: Chat = arguments?.getParcelable<Chat>(ID_CHAT)!!
         val userId: String = arguments?.getString(ID_USER)!!
 
         redactMode.sendRedactModeFragment(this,this)
@@ -80,15 +82,25 @@ class DialogWithUserFragment: Fragment() , IUpdateDialog, ILoadImageFromGallery,
 
         binding.send.setOnClickListener {
             Log.i("GALLERY","$isTakeImages")
-            if (isTakeImages) {
-                val activity = activity as DialogActivity
-                if (activity.imagesSelected.isNotEmpty()) {
-                    sendImages(activity.imagesSelected)
-                    buttomSheet.closeBottomSheet()
+            if (redactMode.isRedactOff()) {
+                if (isTakeImages) {
+                    val activity = activity as DialogActivity
+                    if (activity.imagesSelected.isNotEmpty()) {
+                        sendImages(activity.imagesSelected)
+                        buttomSheet.closeBottomSheet()
+                    }
+                } else if (binding.edit.text.trim().isNotEmpty()) {
+                    binding.viewModel?.sendMessageText(message = binding.edit.text.toString())
+                    binding.edit.setText("")
                 }
-            }else if (binding.edit.text.trim().isNotEmpty()) {
-                binding.viewModel?.sendMessageText(message = binding.edit.text.toString())
-                binding.edit.setText("")
+            } else if (binding.edit.text.trim().isNotEmpty()) {
+                if (messageRefactor != null){
+                    messageRefactor?.text = binding.edit.text.toString()
+                    binding.viewModel?.updateMessage(messageText = messageRefactor!!)
+                    messageRefactor = null
+                    binding.edit.setText("")
+                }
+                redactMode.redactModeOff()
             }
         }
 
@@ -173,22 +185,29 @@ class DialogWithUserFragment: Fragment() , IUpdateDialog, ILoadImageFromGallery,
         isTakeImages = isChange
     }
 
-    override fun edit(message: IMessage) {
-        if (message is MessageText) {
+    override fun edit(item: IMessage) {
+        if (item is MessageText) {
             binding.editMessage.visibility = View.VISIBLE
-            binding.edit.setText(message.text)
+            binding.edit.setText(item.text)
         }
+        if (buttomSheet.isBottomShow()){
+            buttomSheet.closeBottomSheet()
+        }
+        messageRefactor = item as MessageText
 
         redactMode.redactModeOn()
     }
 
-    override fun delete(message: IMessage, isDeleteForAll: Boolean) {
-
+    override fun delete(item: IMessage, isDeleteForAll: Boolean) {
+        binding.viewModel!!.deleteMessage(message = item, isDeleteForAll = isDeleteForAll)
     }
 
     override fun editModeClose() {
         binding.editMessage.visibility = View.GONE
         binding.edit.setText("")
+        messageRefactor = null
     }
+
+    override fun delete(item: IMessage) { }
 
 }

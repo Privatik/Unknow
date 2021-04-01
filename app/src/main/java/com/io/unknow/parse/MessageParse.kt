@@ -17,11 +17,17 @@ object MessageParse {
         }
     }
 
-    fun getMessageFromShot(messageShot: DataSnapshot): IMessage{
-        return if (messageShot.child("text").value != null){
-            messageShot.getValue(MessageText::class.java)!!
-        } else {
-            messageShot.getValue(MessageImage::class.java)!!
+    fun getMessageFromShot(messageShot: DataSnapshot): IMessage?{
+        return when {
+            messageShot.child("text").value != null -> {
+                messageShot.getValue(MessageText::class.java)!!
+            }
+            messageShot.child("imageUrl").value != null -> {
+                messageShot.getValue(MessageImage::class.java)!!
+            }
+            else -> {
+                null
+            }
         }
     }
 }

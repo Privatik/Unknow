@@ -12,19 +12,20 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.io.unknow.databinding.*
-import com.io.unknow.glide.GlideApp
 import com.io.unknow.model.IMessage
 import com.io.unknow.model.MessageImage
 import com.io.unknow.model.MessageText
 import com.io.unknow.ui.dialogfragment.EditMessageDialogFragment
+import com.io.unknow.ui.dialogfragment.ImageViewDialog
 
 abstract class MessageViewHolder(itemView: View, private val fragmentManager: FragmentManager, private val isRedactMode: Boolean): RecyclerView.ViewHolder(itemView){
+    abstract var doNotEdit : Boolean
 
     init {
         itemView.setOnLongClickListener{
             if (isRedactMode) {
                 EditMessageDialogFragment.newInstance(
-                    false,
+                    doNotEdit,
                     getMessage()
                 ).show(fragmentManager, "edit")
 
@@ -39,7 +40,7 @@ abstract class MessageViewHolder(itemView: View, private val fragmentManager: Fr
 
 class MyMessageTextItem(itemView: View, fragmentManager: FragmentManager, isRedactMode: Boolean): MessageViewHolder(itemView, fragmentManager, isRedactMode), IBindText{
     val myMessageBinding = MyMessageTextBinding.bind(itemView)
-
+    override var doNotEdit: Boolean = false
 
     override fun bindText(){
         myMessageBinding.time.text = myMessageBinding.message?.time!!.substring(11)
@@ -50,6 +51,7 @@ class MyMessageTextItem(itemView: View, fragmentManager: FragmentManager, isReda
 
 class UserMessageTextItem(itemView: View, fragmentManager: FragmentManager, isRedactMode: Boolean) : MessageViewHolder(itemView, fragmentManager, isRedactMode), IBindText {
     val userMessageBinding = UserMessageTextBinding.bind(itemView)
+    override var doNotEdit: Boolean = true
 
     override fun bindText(){
         userMessageBinding.time.text = userMessageBinding.message?.time!!.substring(11)
@@ -59,8 +61,9 @@ class UserMessageTextItem(itemView: View, fragmentManager: FragmentManager, isRe
 
 }
 
-class MyMessageImageItem(itemView: View, fragmentManager: FragmentManager, isRedactMode: Boolean) : MessageViewHolder(itemView, fragmentManager, isRedactMode), IBindImage{
+class MyMessageImageItem(itemView: View,private val fragmentManager: FragmentManager, isRedactMode: Boolean) : MessageViewHolder(itemView, fragmentManager, isRedactMode), IBindImage{
     val myMessageBinding = MyMessageImageBinding.bind(itemView)
+    override var doNotEdit: Boolean = true
 
     override fun bindImage(context: Context){
         Log.i("Glide","url:  ${myMessageBinding.message?.imageUrl}")
@@ -70,14 +73,19 @@ class MyMessageImageItem(itemView: View, fragmentManager: FragmentManager, isRed
             .into(myMessageBinding.image)
 
         myMessageBinding.time.text = myMessageBinding.message?.time!!.substring(11)
+
+        myMessageBinding.image.setOnClickListener {
+            ImageViewDialog.newInstance(myMessageBinding.message!!.imageUrl).show(fragmentManager,"image")
+        }
     }
 
     override fun getMessage(): IMessage = myMessageBinding.message as MessageImage
 }
 
-class UserMessageImageItem(itemView: View, fragmentManager: FragmentManager, isRedactMode: Boolean): MessageViewHolder(itemView, fragmentManager, isRedactMode),
+class UserMessageImageItem(itemView: View, private val fragmentManager: FragmentManager, isRedactMode: Boolean): MessageViewHolder(itemView, fragmentManager, isRedactMode),
     IBindImage {
     val userMessageBinding = UserMassageImageBinding.bind(itemView)
+    override var doNotEdit: Boolean = true
 
     override fun bindImage(context: Context) {
         Glide.with(context)
@@ -107,6 +115,10 @@ class UserMessageImageItem(itemView: View, fragmentManager: FragmentManager, isR
             .into(userMessageBinding.image)
 
         userMessageBinding.time.text = userMessageBinding.message?.time!!.substring(11)
+
+        userMessageBinding.image.setOnClickListener {
+            ImageViewDialog.newInstance(userMessageBinding.message!!.imageUrl).show(fragmentManager,"image")
+        }
     }
 
     override fun getMessage(): IMessage = userMessageBinding.message as MessageImage

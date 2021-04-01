@@ -15,14 +15,14 @@ import com.io.unknow.parse.MessageParse
 
 class DeleteConfirmationDialogFragment : DialogFragment(){
 
-    private lateinit var dialogRedactMessage: IDialogRedactMessage
+    private lateinit var dialogRedactMessage: IDialogRedactMessage<IMessage>
 
     companion object{
         private const val TAG_MESSAGE = "Message"
 
         fun newInstance(message: IMessage):DeleteConfirmationDialogFragment{
             val args = Bundle()
-            args.putSerializable(TAG_MESSAGE,message)
+            args.putParcelable(TAG_MESSAGE,message)
 
             val fragment = DeleteConfirmationDialogFragment()
             fragment.arguments = args
@@ -33,7 +33,7 @@ class DeleteConfirmationDialogFragment : DialogFragment(){
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
-        dialogRedactMessage = context as IDialogRedactMessage
+        dialogRedactMessage = context as IDialogRedactMessage<IMessage>
     }
 
 
@@ -47,13 +47,15 @@ class DeleteConfirmationDialogFragment : DialogFragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val message = MessageParse.getMessageFromInterface(arguments?.getSerializable(TAG_MESSAGE) as IMessage)!!
+        dialog!!.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        val message = MessageParse.getMessageFromInterface(arguments?.getParcelable<IMessage>(TAG_MESSAGE)!!)!!
 
         val isDeleteCheckBox = view.findViewById<CheckBox>(R.id.is_delete)
         val deleteButton = view.findViewById<Button>(R.id.delete)
 
         deleteButton.setOnClickListener {
-            dialogRedactMessage.delete(message = message, isDeleteForAll = isDeleteCheckBox.isChecked)
+            dialogRedactMessage.delete(item = message, isDeleteForAll = isDeleteCheckBox.isChecked)
+            dialog?.cancel()
         }
     }
 }

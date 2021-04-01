@@ -6,7 +6,7 @@
 
         <variable
             name="viewModel"
-            type="com.io.unknow.viewmodel.dialogfragment.DialogWithUserViewModel" />
+            type="com.io.unknow.viewmodel.fragment.DialogWithUserViewModel" />
     </data>
 <LinearLayout
     android:id="@+id/content"

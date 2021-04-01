@@ -77,9 +77,9 @@ class DialogWithUserModel(private val liveData: DialogWithUserLiveData, messageI
         baseMessages.addChildEventListener(object : ChildEventListener {
 
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                Log.e("Message", "onChildAdded")
+               // Log.e("Message", "onChildAdded")
                 val message = MessageParse.getMessageFromShot(snapshot)
-                keyMessages[snapshot.key!!] = message
+                keyMessages[snapshot.key!!] = message!!
 
                 if (isWritePermission) {
                     baseMy.child(LAST_MESSAGE).setValue(message)
@@ -95,7 +95,9 @@ class DialogWithUserModel(private val liveData: DialogWithUserLiveData, messageI
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
 
-            override fun onChildRemoved(snapshot: DataSnapshot) {}
+            override fun onChildRemoved(snapshot: DataSnapshot) {
+                Log.e("Remove","${snapshot.key}")
+            }
 
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
 
@@ -138,7 +140,8 @@ class DialogWithUserModel(private val liveData: DialogWithUserLiveData, messageI
 
     fun createMessageImage(messageUrl: String) {
 
-        val file = filesPhotos.child("${UUID.randomUUID()}")
+        val uuid = UUID.randomUUID()
+        val file = filesPhotos.child("${uuid}")
 
         file.putFile(Uri.fromFile(File(messageUrl))).addOnSuccessListener {
 
@@ -147,6 +150,7 @@ class DialogWithUserModel(private val liveData: DialogWithUserLiveData, messageI
                 Log.i("CAMERA", "getDow")
                 val messageModel = MessageImage(
                     imageUrl = it.result.toString(),
+                    imagePlaceInBase = uuid.toString(),
                     time = dataParse.getStringNow(),
                     userId = mAuth.currentUser!!.uid
                 )
@@ -170,13 +174,15 @@ class DialogWithUserModel(private val liveData: DialogWithUserLiveData, messageI
 
         fun deleteMessage(message: IMessage, isDeleteForAll: Boolean) {
             if (message is MessageImage) {
-
+                if(isDeleteForAll)
+                    filesPhotos.child(message.imagePlaceInBase).delete()
             }
 
             val deleteMessage =
                 baseMessages.child(keyMessages.filter { it.value == message }.keys.first())
             if (isDeleteForAll) {
                 deleteMessage.removeValue()
+                updateMessageField()
             } else {
                 deleteMessage.child("listViewMessage")
                     .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -189,6 +195,7 @@ class DialogWithUserModel(private val liveData: DialogWithUserLiveData, messageI
                                 if (numberUser.value == mAuth.currentUser!!.uid) {
                                     deleteMessage.child("listViewMessage").child(numberUser.key!!)
                                         .removeValue()
+                                    updateMessageField()
                                 }
                             }
                         }
@@ -196,4 +203,17 @@ class DialogWithUserModel(private val liveData: DialogWithUserLiveData, messageI
                     )
             }
         }
+
+    fun updateMessage(messageText: MessageText) {
+        val updateMessage =
+            baseMessages.child(keyMessages.filter { it.value == messageText }.keys.first())
+
+        messageText.isEdit = true
+        updateMessage.setValue(messageText)
+        updateMessageField()
+    }
+
+    private fun updateMessageField(){
+        adapter.notifyDataSetChanged()
+    }
 }

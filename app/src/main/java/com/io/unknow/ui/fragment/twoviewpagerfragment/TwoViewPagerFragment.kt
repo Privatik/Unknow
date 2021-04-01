@@ -13,11 +13,12 @@ import androidx.lifecycle.ViewModelProvider
 import com.io.unknow.R
 import com.io.unknow.model.Chat
 import com.io.unknow.navigation.IPushTwoFragment
+import com.io.unknow.navigation.IUpdateChatList
 import com.io.unknow.navigation.IUpdateSwipe
 import com.io.unknow.viewmodel.fragment.TwoFieldViewModel
 
 
-class  TwoViewPagerFragment : Fragment(), IPushTwoFragment{
+class TwoViewPagerFragment : Fragment(), IPushTwoFragment, IUpdateChatList{
 
     private lateinit var viewModel: TwoFieldViewModel
     private var onSwipe = false
@@ -89,6 +90,12 @@ class  TwoViewPagerFragment : Fragment(), IPushTwoFragment{
             }
 
         }
+    }
+
+    override fun update() {
+        childFragmentManager.beginTransaction()
+            .addToBackStack(null)
+            .replace(R.id.messages_field, EmptyFragment()).commit()
     }
 
 

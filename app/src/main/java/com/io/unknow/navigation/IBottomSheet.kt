@@ -7,5 +7,7 @@ interface IBottomSheet {
     fun loadBottomSheet()
     fun closeBottomSheet()
 
+    fun isBottomShow():Boolean
+
     fun loadInterfaceForLoadImages(loadImageFromGallery: ILoadImageFromGallery, sendButton: ImageButton)
 }

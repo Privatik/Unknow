@@ -28,6 +28,7 @@ import com.io.unknow.util.Setting
 import com.io.unknow.viewmodel.activity.DialogViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -35,7 +36,7 @@ import kotlinx.coroutines.launch
 private const val REQUEST_TAKE_PHOTO = 1
 private const val GALLERY = "Gallery"
 class DialogActivity : AppCompatActivity(), IBottomSheet, IRedactModeActivity,
-    IDialogRedactMessage {
+    IDialogRedactMessage<IMessage> {
 
     private lateinit var binding: ActivityDialogBinding
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
@@ -43,9 +44,9 @@ class DialogActivity : AppCompatActivity(), IBottomSheet, IRedactModeActivity,
 
     private lateinit var loadImageFromGallery: ILoadImageFromGallery
     private lateinit var redactModeFragment: IRedactModeFragment
-    private lateinit var dialogRedactMessage: IDialogRedactMessage
+    private lateinit var dialogRedactMessage: IDialogRedactMessage<IMessage>
     private lateinit var sendImages: ImageButton
-    private var isNotRedact: Boolean = true
+    private var isRedact: Boolean = false
 
     var imagesSelected: MutableList<String> = mutableListOf()
 
@@ -59,6 +60,7 @@ class DialogActivity : AppCompatActivity(), IBottomSheet, IRedactModeActivity,
         }
     }
 
+    @ExperimentalCoroutinesApi
     override fun onCreate(savedInstanceState: Bundle?) {
         Setting.initActivity(this)
         super.onCreate(savedInstanceState)
@@ -71,7 +73,7 @@ class DialogActivity : AppCompatActivity(), IBottomSheet, IRedactModeActivity,
 
         try {
             val userId =  intent.getStringExtra(USER_ID)!!
-            val chat = intent.getSerializableExtra(CHAT)?.let { it as Chat }
+            val chat = intent.getParcelableExtra<Chat>(CHAT)
             if (chat == null) {
                 CoroutineScope(Dispatchers.Main).launch {
                     binding.viewModel?.getChat(userId)?.collect {
@@ -188,6 +190,8 @@ class DialogActivity : AppCompatActivity(), IBottomSheet, IRedactModeActivity,
         imagesSelected.clear()
     }
 
+    override fun isBottomShow(): Boolean = bottomSheetBehavior.state != STATE_HIDDEN
+
 
     override fun loadInterfaceForLoadImages(
         loadImageFromGallery: ILoadImageFromGallery,
@@ -199,7 +203,7 @@ class DialogActivity : AppCompatActivity(), IBottomSheet, IRedactModeActivity,
 
     override fun onBackPressed() {
         when {
-            !isNotRedact -> {
+            isRedact -> {
                 redactModeOff()
                 Log.e("Exit","notRedact")
             }
@@ -214,28 +218,30 @@ class DialogActivity : AppCompatActivity(), IBottomSheet, IRedactModeActivity,
     }
 
     override fun redactModeOn() {
-        isNotRedact = false
+        isRedact = true
     }
 
     override fun redactModeOff() {
-        isNotRedact = true
+        isRedact = false
         redactModeFragment.editModeClose()
     }
 
-    override fun sendRedactModeFragment(redactModeFragment: IRedactModeFragment, dialogRedactMessage: IDialogRedactMessage) {
+    override fun sendRedactModeFragment(redactModeFragment: IRedactModeFragment, dialogRedactMessage: IDialogRedactMessage<IMessage>) {
         this.redactModeFragment = redactModeFragment
         this.dialogRedactMessage = dialogRedactMessage
     }
 
-    override fun isRedactOff(): Boolean = isNotRedact
+    override fun isRedactOff(): Boolean = !isRedact
 
-    override fun edit(message: IMessage) {
-        dialogRedactMessage.edit(message = message)
+    override fun edit(item: IMessage) {
+        dialogRedactMessage.edit(item = item)
     }
 
-    override fun delete(message: IMessage, isDeleteForAll: Boolean) {
-        dialogRedactMessage.delete(message = message,isDeleteForAll = isDeleteForAll)
+    override fun delete(item: IMessage, isDeleteForAll: Boolean) {
+        dialogRedactMessage.delete(item = item,isDeleteForAll = isDeleteForAll)
     }
+
+    override fun delete(item: IMessage) {}
 
 
 }

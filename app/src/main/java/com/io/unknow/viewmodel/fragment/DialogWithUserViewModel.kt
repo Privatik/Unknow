@@ -1,4 +1,4 @@
-package com.io.unknow.viewmodel.dialogfragment
+package com.io.unknow.viewmodel.fragment
 
 import androidx.lifecycle.ViewModel
 import com.io.unknow.adapter.DialogAdapter
@@ -6,6 +6,7 @@ import com.io.unknow.firebase.DialogWithUserModel
 import com.io.unknow.livedata.DialogWithUserLiveData
 import com.io.unknow.model.Chat
 import com.io.unknow.model.IMessage
+import com.io.unknow.model.MessageText
 import com.io.unknow.navigation.IUpdateDialog
 
 
@@ -39,8 +40,12 @@ class DialogWithUserViewModel : ViewModel() {
         dialogWithUserModel?.changeDialog(isRead)
     }
 
-    fun deleteMessage(message: IMessage){
+    fun deleteMessage(message: IMessage, isDeleteForAll: Boolean){
+        dialogWithUserModel?.deleteMessage(message = message, isDeleteForAll = isDeleteForAll)
+    }
 
+    fun updateMessage(messageText: MessageText){
+        dialogWithUserModel?.updateMessage(messageText = messageText)
     }
 
 }

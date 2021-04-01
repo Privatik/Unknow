@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import com.io.unknow.firebase.DialogActivityModel
 import com.io.unknow.livedata.OnlineLiveData
 import com.io.unknow.model.Chat
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 
@@ -44,6 +45,7 @@ class DialogViewModel: ViewModel() {
         return listOfAllImages
     }
 
+    @ExperimentalCoroutinesApi
     fun getChat(userId: String): Flow<Chat>  = dialogActivityModel.getChat(userId = userId)
 
     fun online(userId: String){ dialogActivityModel.onlineUser(userId = userId) }

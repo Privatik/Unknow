@@ -15,6 +15,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.io.unknow.R
 import com.io.unknow.adapter.ViewPagerAdapter
 import com.io.unknow.currentuser.CurrentUser
+import com.io.unknow.model.Chat
 import com.io.unknow.navigation.*
 import com.io.unknow.util.Setting
 import java.util.*
@@ -22,13 +23,15 @@ import java.util.*
 private val TAG = MainActivity::class.simpleName
 private const val MY_PERMISSIONS_REQUEST = 1234
 private val PERMISSIONS = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-class MainActivity : AppCompatActivity() , IMainExit , IScrooll, ISetting, IUpdateSwipe, IUpdateActivity {
+class MainActivity : AppCompatActivity() , IMainExit , IScrooll, ISetting, IUpdateSwipe, IUpdateActivity, IDialogRedactMessage<Chat>, IRedactModeForSendRequest, IUpdateChatList {
 
     private lateinit var mFirebaseAnalytics: FirebaseAnalytics
     private var viewPager: ViewPager? = null
-   // private lateinit var pushNotification: PushNotification
+    private var adapter: ViewPagerAdapter? = null
     private var pushTwoFragment: IPushTwoFragment? = null
     private var pushProfileFragment: IPushProfileFragment? = null
+
+    private lateinit var dialogRedactMessage: IDialogRedactMessage<Chat>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Setting.initActivity(this)
@@ -59,7 +62,6 @@ class MainActivity : AppCompatActivity() , IMainExit , IScrooll, ISetting, IUpda
 
         })
 
-        //startActivity(Intent(this, LoginActivty))
     }
 
 
@@ -139,5 +141,23 @@ class MainActivity : AppCompatActivity() , IMainExit , IScrooll, ISetting, IUpda
         startActivity(Intent(this, MainActivity::class.java).putExtra("scroll", pushProfileFragment?.scrollViewGetY()))
         viewPager = null
         finish()
+    }
+
+
+    override fun delete(item: Chat) {
+        dialogRedactMessage.delete(item = item)
+    }
+
+
+    override fun edit(item: Chat) {}
+    override fun delete(item: Chat, isDeleteForAll: Boolean) {}
+
+
+    override fun sendRedactModeFragment(dialogRedactMessage: IDialogRedactMessage<Chat>) {
+        this.dialogRedactMessage = dialogRedactMessage
+    }
+
+    override fun update() {
+        adapter!!.twoFragment.update()
     }
 }

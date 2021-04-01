@@ -1,5 +1,6 @@
 package com.io.unknow.ui.fragment.twoviewpagerfragment
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -11,6 +12,7 @@ import android.widget.EditText
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.constraintlayout.motion.widget.TransitionAdapter
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -18,13 +20,22 @@ import com.io.unknow.R
 import com.io.unknow.adapter.AdapterChats
 import com.io.unknow.model.Chat
 import com.io.unknow.navigation.ICreateDialog
+import com.io.unknow.navigation.IDialogRedactMessage
+import com.io.unknow.navigation.IRedactModeForSendRequest
+import com.io.unknow.navigation.IUpdateChatList
 import com.io.unknow.ui.activity.DialogActivity
 import com.io.unknow.ui.dialogfragment.SearchUserDialogFragment
+import com.io.unknow.viewmodel.fragment.ChatListViewModel
 import java.io.Serializable
 
-class ChatListFragment: Fragment(), ICreateDialog {
+class ChatListFragment: Fragment(), ICreateDialog, IDialogRedactMessage<Chat>{
     private var adapter: AdapterChats? = null
     private lateinit var motionLayout: MotionLayout
+    private lateinit var redactForSendRequest: IRedactModeForSendRequest
+    private lateinit var updateChatList: IUpdateChatList
+
+    private lateinit var viewModel: ChatListViewModel
+    private lateinit var map: MutableMap<String, Chat>
 
     companion object{
         private const val ID_CHATS = "chats"
@@ -39,24 +50,31 @@ class ChatListFragment: Fragment(), ICreateDialog {
         }
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        redactForSendRequest = context as IRedactModeForSendRequest
+        updateChatList = context as IUpdateChatList
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
+        viewModel = ViewModelProvider(this).get(ChatListViewModel::class.java)
         return inflater.inflate(R.layout.fragment_list_chat,container,false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        redactForSendRequest.sendRedactModeFragment(this)
 
         val listChats = arguments?.getSerializable(ID_CHATS) as MutableMap<String, Chat>
 
         val chats = view.findViewById<RecyclerView>(R.id.chats)
         chats.layoutManager = LinearLayoutManager(context,LinearLayoutManager.VERTICAL,false)
-        val map = mutableMapOf<String, Chat>()
+        map = mutableMapOf()
         map.putAll(listChats)
         adapter = AdapterChats(map,this)
         chats.adapter = adapter
@@ -120,4 +138,18 @@ class ChatListFragment: Fragment(), ICreateDialog {
     override fun open(chat: Chat, userId: String) {
         DialogActivity.newInstance(context = requireContext(), chat = chat, userId = userId)
     }
+
+    override fun delete(item: Chat) {
+        if (map.size == 1){
+            updateChatList.update()
+        }
+
+        val userId = map.filter { item == it.value }.map { it.key }.first()
+        map.remove(userId)
+
+        viewModel.deleteChat(userId = userId)
+    }
+
+    override fun delete(item: Chat, isDeleteForAll: Boolean) { }
+    override fun edit(item: Chat) { }
 }
