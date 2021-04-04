@@ -31,6 +31,7 @@ class OneFieldModel(val liveData: OneFieldLiveData) {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val userB = snapshot.getValue(User::class.java)!!
                 liveData.setUser(userB)
+
             }
 
             override fun onCancelled(error: DatabaseError) {

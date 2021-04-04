@@ -8,8 +8,13 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.RecyclerView
 import com.io.unknow.R
+import com.io.unknow.firebase.ChatListModel
+import com.io.unknow.firebase.ChatListener
+import com.io.unknow.livedata.ChatLiveData
 import com.io.unknow.model.Chat
 import com.io.unknow.model.MessageImage
 import com.io.unknow.model.MessageText
@@ -69,20 +74,12 @@ class AdapterChats(private val map: MutableMap<String, Chat>,val fragment: Fragm
                 this.chat = chat
             }
 
-            if (chat.last_message != null) {
-                if (userId == chat.last_message?.userId) {
-                    if (chat.last_message is MessageText) {
-                        message.text = (chat.last_message as MessageText).text
-                    } else if (chat.last_message is MessageImage) {
-                        message.text = "Фотография"
-                    }
-                } else {
-                    if (chat.last_message is MessageText) {
-                        message.text = "Вы:  " + (chat.last_message as MessageText).text
-                    } else if (chat.last_message is MessageImage) {
-                        message.text = "Вы: Фотография"
-                    }
-                }
+            val liveData = ChatLiveData()
+            ChatListener(userId = userId, chat = chat, liveData = liveData).newMessageListener()
+
+
+            liveData.observe(fragment.viewLifecycleOwner) {
+                 message.text = it
             }
         }
     }

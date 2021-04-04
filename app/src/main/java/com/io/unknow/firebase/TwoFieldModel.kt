@@ -49,7 +49,7 @@ class TwoFieldModel(liveData: TwoFieldLiveData) {
             }
 
             override fun onCancelled(error: DatabaseError) {
-
+                Log.e("Auth", error.message)
             }
 
         })

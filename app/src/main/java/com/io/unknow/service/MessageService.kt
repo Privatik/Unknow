@@ -1,79 +1,58 @@
 package com.io.unknow.service
 
-import android.app.IntentService
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
-import android.media.RingtoneManager
-import android.os.Build
 import android.util.Log
-import androidx.core.app.NotificationCompat
-import com.io.unknow.R
-import com.io.unknow.model.NotificationMessage
-import com.io.unknow.ui.activity.DialogActivity
-import java.io.Serializable
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.google.firebase.messaging.FirebaseMessagingService
+import com.google.firebase.messaging.RemoteMessage
+import com.io.unknow.util.TAGS.ID
+import com.io.unknow.util.TAGS.MESSAGE
+import com.io.unknow.util.TAGS.USER_ID
 
 
 private const val CHANEL_ID = "Notification"
 private val TAG = MessageService::class.simpleName
-class MessageService : IntentService("MessageService") {
+class MessageService : FirebaseMessagingService(){
+
+    private var count = 1000
 
     companion object{
-        private const val LIST_MESSAGE = "list_message"
-        private var count = 1
-
-        fun newInstance(context: Context, list: MutableList<NotificationMessage>): Intent{
-            val intent = Intent(context, MessageService::class.java)
-            intent.putExtra(LIST_MESSAGE, list as Serializable)
-            return intent
-        }
+        const val INTENT_SEND_MESSAGE = "Intent send message app"
     }
 
-    override fun onHandleIntent(intent: Intent?) {
-        Log.i("Notification", "onHandle")
-        val list = intent?.getSerializableExtra(LIST_MESSAGE) as MutableList<*>
-        Log.i(TAG!!, "onHandle ${list.size}")
-        Log.i("Notification", "onHandle ${list.size}")
-        createNotification(list)
+    override fun onMessageReceived(remoteMessage: RemoteMessage) {
+        super.onMessageReceived(remoteMessage)
+
+        val userId = remoteMessage.data[USER_ID]!!
+        val message = remoteMessage.data[MESSAGE]!!
+
+        LocalBroadcastManager.getInstance(this).sendBroadcast(Intent().apply {
+            action = INTENT_SEND_MESSAGE
+            putExtra(USER_ID,userId)
+            putExtra(MESSAGE,message)
+            putExtra(ID,count)
+        })
+
+        count++
+
+        Log.e(CHANEL_ID,"Received $message")
     }
 
-    private fun createNotification(list: MutableList<*>){
-        val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    override fun onMessageSent(p0: String) {
+        super.onMessageSent(p0)
 
-        for (messageModel in list) {
-            val message = messageModel as NotificationMessage
+        Log.e(CHANEL_ID,"Sent $p0")
+    }
 
-            val pendingIntent = PendingIntent.getActivity(
-                this,
-                0,
-                DialogActivity.newInstance(context = this, chat = null, userId = message.userId),
-                PendingIntent.FLAG_UPDATE_CURRENT
-            )
+    override fun onDeletedMessages() {
+        super.onDeletedMessages()
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val notificationChannel = NotificationChannel(
-                    CHANEL_ID,
-                    "My Notifications",
-                    NotificationManager.IMPORTANCE_LOW
-                )
-                notificationChannel.setSound(null, null)
-                manager.createNotificationChannel(notificationChannel)
-            }
-            val builder = NotificationCompat.Builder(this, CHANEL_ID)
-            builder.setSmallIcon(R.mipmap.icon)
-                .setContentTitle(message.userId)
-                .setContentText(message.lastMessage)
-                .setStyle(NotificationCompat.BigTextStyle().bigText(message.messageBigText))
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setContentIntent(pendingIntent)
-                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                .setAutoCancel(true)
+        Log.e(CHANEL_ID,"onDeleted")
+    }
 
-            Log.i(TAG!!, "Notification create")
-            manager.notify(count, builder.build())
-        }
+    override fun onNewToken(p0: String) {
+        super.onNewToken(p0)
 
+        Log.e(CHANEL_ID,p0)
     }
 }

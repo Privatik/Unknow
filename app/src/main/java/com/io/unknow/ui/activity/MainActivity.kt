@@ -3,6 +3,7 @@ package com.io.unknow.ui.activity
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.ActivityManager
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -10,6 +11,8 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.viewpager.widget.ViewPager
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.io.unknow.R
@@ -17,7 +20,9 @@ import com.io.unknow.adapter.ViewPagerAdapter
 import com.io.unknow.currentuser.CurrentUser
 import com.io.unknow.model.Chat
 import com.io.unknow.navigation.*
+import com.io.unknow.push.PushNotification
 import com.io.unknow.util.Setting
+import com.kirich1409.androidnotificationdsl.notification
 import java.util.*
 
 private val TAG = MainActivity::class.simpleName
@@ -31,6 +36,8 @@ class MainActivity : AppCompatActivity() , IMainExit , IScrooll, ISetting, IUpda
     private var pushTwoFragment: IPushTwoFragment? = null
     private var pushProfileFragment: IPushProfileFragment? = null
 
+    private val pushNotification by lazy {  PushNotification(this) }
+
     private lateinit var dialogRedactMessage: IDialogRedactMessage<Chat>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,8 +46,6 @@ class MainActivity : AppCompatActivity() , IMainExit , IScrooll, ISetting, IUpda
         setContentView(R.layout.activity_main)
 
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
-
-        //pushNotification = PushNotification(this)
 
         viewPager = findViewById(R.id.pager)
         viewPager?.adapter = ViewPagerAdapter(this, intent.getIntExtra("scroll", 0))
@@ -114,18 +119,14 @@ class MainActivity : AppCompatActivity() , IMainExit , IScrooll, ISetting, IUpda
             return
         }
 
-
-        /*  try {
-              pushNotification.cancelAlarm()
-          } catch (e: Exception) {
-          }*/
+        pushNotification.unregister()
     }
 
     override fun onStop() {
         super.onStop()
         Log.i(TAG, "OnStop")
 
-       // pushNotification.createAlarm()
+        pushNotification.register()
     }
 
     override fun update(pushTwoFragment: IPushTwoFragment) {

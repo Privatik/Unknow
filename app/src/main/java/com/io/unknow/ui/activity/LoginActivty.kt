@@ -46,6 +46,7 @@ class LoginActivty: AppCompatActivity(), ICreateUser{
     override fun createAccount(email: String, password: String, user: User) {
         binding.viewmodel?.createUser(email, password, user)
         Log.i("Login","$email $password $user")
+        supportFragmentManager
     }
 
     private fun initButton(button: Button){

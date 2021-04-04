@@ -30,7 +30,8 @@
     </style>
 
     <style name="MyDatePickerStyle" parent="@android:style/Widget.Material.DatePicker">
-        <item name="colorControlNormal">@color/curious_blue</item>
+        <item name="android:background">@color/curious_blue</item>
+        <item name="colorControlNormal">@android:color/white</item>
         <item name="android:headerMonthTextAppearance">@color/curious_blue</item>
     </style>
 

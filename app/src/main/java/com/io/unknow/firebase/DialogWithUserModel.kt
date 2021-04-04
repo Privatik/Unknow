@@ -4,6 +4,8 @@ import android.net.Uri
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.RemoteMessage
 import com.google.firebase.storage.StorageReference
 import com.io.unknow.adapter.DialogAdapter
 import com.io.unknow.app.App
@@ -14,6 +16,8 @@ import com.io.unknow.model.MessageText
 import com.io.unknow.navigation.IUpdateDialog
 import com.io.unknow.parse.DataParse
 import com.io.unknow.parse.MessageParse
+import com.io.unknow.util.TAGS.MESSAGE
+import com.io.unknow.util.TAGS.USER_ID
 import com.io.unknow.util.UpdateDateToolbar
 import java.io.File
 import java.util.*
@@ -30,6 +34,7 @@ class DialogWithUserModel(private val liveData: DialogWithUserLiveData, messageI
     @Inject lateinit var mAuth: FirebaseAuth
     @Inject lateinit var base: DatabaseReference
     @Inject lateinit var storage: StorageReference
+    @Inject lateinit var messaging: FirebaseMessaging
 
     private var baseMessages: DatabaseReference
     private var isWritePermission = false
@@ -117,7 +122,19 @@ class DialogWithUserModel(private val liveData: DialogWithUserLiveData, messageI
     private fun postMessage(iMessage: IMessage){
         baseMessages.push().setValue(iMessage)
         if (!isReadUser){
-            baseNotification.push().setValue(iMessage)
+            val message: RemoteMessage = if (iMessage is MessageText){
+                RemoteMessage.Builder(userId)
+                    .addData(USER_ID, iMessage.userId)
+                    .addData(MESSAGE, iMessage.text)
+                    .build()
+            }else{
+                RemoteMessage.Builder(userId)
+                    .addData(USER_ID, iMessage.userId)
+                    .addData(MESSAGE, "Фотография")
+                    .build()
+            }
+
+            messaging.send(message)
         }
         if (!isWritePermission){
             isWritePermission = true

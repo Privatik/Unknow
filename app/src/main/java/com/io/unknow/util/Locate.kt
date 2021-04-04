@@ -1,7 +1,7 @@
 package com.io.unknow.util
 
 object Locate {
-    private var isRuLocate = true
+    var isRuLocate = true
 
     fun initLocate(){
         isRuLocate = Setting.getLocateLanguage() == "ru"

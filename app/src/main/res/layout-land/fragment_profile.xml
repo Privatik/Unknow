@@ -178,10 +178,9 @@
                         android:layout_height="wrap_content"
                         android:text="@string/local"
                         style="@style/MarginProfile"
-                        app:layout_constraintBottom_toBottomOf="parent"
+
                         app:layout_constraintStart_toStartOf="@id/weight"
-                        app:layout_constraintTop_toBottomOf="@+id/weight"
-                        android:visibility="gone"/>
+                        app:layout_constraintTop_toBottomOf="@+id/weight" />
 
                     <ImageButton
                         android:id="@+id/update"
@@ -217,6 +216,19 @@
                         app:layout_constraintBottom_toBottomOf="@+id/weight"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/weight" />
+
+                    <TextView
+                        android:id="@+id/editLocal"
+                        style="@style/textView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:gravity="end"
+                        android:text='@{viewmodel.user.local == null? "" : viewmodel.user.local}'
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/local" />
+
 
 
                 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,6 +5,7 @@ import com.io.unknow.broadcast.NotificationListener
 import com.io.unknow.di.module.FIreBaseModule
 import com.io.unknow.ui.activity.DialogActivity
 import com.io.unknow.ui.activity.SplashScreen
+import com.io.unknow.ui.fragment.oneviewpagerfragment.ProfileFragment
 import dagger.Component
 import javax.inject.Singleton
 
@@ -14,6 +15,7 @@ interface MainComponent {
 
     fun inject(baseAuth: BaseAuth)
     fun inject(profileModel: ProfileModel)
+    fun inject(chatListener: ChatListener)
     fun inject(searchUserModel: SearchUserModel)
     fun inject(twoFieldModel: TwoFieldModel)
     fun inject(oneFieldModel: OneFieldModel)
@@ -22,6 +24,5 @@ interface MainComponent {
     fun inject(dialogActivityModel: DialogActivityModel)
 
     fun inject(activity: SplashScreen)
-
-    fun inject(broadCast: NotificationListener)
+    fun inject(activity: ProfileFragment)
 }

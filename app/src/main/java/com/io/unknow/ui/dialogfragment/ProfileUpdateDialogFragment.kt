@@ -22,11 +22,13 @@ class ProfileUpdateDialogFragment: DialogFragment() {
         private const val HEIGHT = "height"
         private const val WEIGHT = "weight"
         private const val UPDATE = "UPDATE"
+        private const val LOCALE = "locale"
 
-        fun newInstance(updateUser: IUpdateUser, height: String, weight: String):ProfileUpdateDialogFragment {
+        fun newInstance(updateUser: IUpdateUser, height: String, weight: String, locale: String):ProfileUpdateDialogFragment {
             val args = Bundle()
             args.putString(HEIGHT, height)
             args.putString(WEIGHT, weight)
+            args.putString(LOCALE, locale)
             args.putSerializable(UPDATE,updateUser)
 
             val fragment = ProfileUpdateDialogFragment()
@@ -58,18 +60,20 @@ class ProfileUpdateDialogFragment: DialogFragment() {
 
         binding.viewmodel?.height = arguments?.getString(HEIGHT) ?: ""
         binding.viewmodel?.weight = arguments?.getString(WEIGHT) ?: ""
+        binding.viewmodel?.locale = arguments?.getString(LOCALE) ?: ""
         val iUpateUser = arguments?.getSerializable(UPDATE) as IUpdateUser
 
         binding.save.setOnClickListener {
             Log.i("Update","click")
             if (editCorrect()) {
-                iUpateUser.update(binding.viewmodel?.height!!, binding.viewmodel?.weight!!)
+                iUpateUser.update(binding.viewmodel?.height!!, binding.viewmodel?.weight!!, binding.viewmodel?.locale!!)
                 dialog?.cancel()
             }
         }
 
         binding.editHeight.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus){
+                Log.e("Height","height size - ${binding.viewmodel?.height} ${binding.viewmodel?.weight}")
                 binding.editHeight.setSelection(binding.viewmodel?.height!!.length)
             }
         }

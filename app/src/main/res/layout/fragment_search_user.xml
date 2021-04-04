@@ -246,7 +246,7 @@
             android:backgroundTint="@color/steel_gray"
             android:hint="@string/local_optional"
             android:textSize="12sp"
-            android:visibility="gone"
+            android:paddingEnd="10dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editWeightStart" />
 

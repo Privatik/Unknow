@@ -12,7 +12,7 @@ object UpdateDateToolbar {
         val currentDate = IMessage.time.substring(0,10)
         if (date != currentDate) {
             date = currentDate
-            return MessageDate(time = "${currentDate.substring(8,10)} ${CalendarParse.getMounth(currentDate.substring(5,7))}")
+            return MessageDate(time = "${currentDate.substring(8,10)} ${CalendarParse.getMounth(currentDate.substring(5,7))} ${currentDate.substring(0,4)}")
         }
         return null
     }

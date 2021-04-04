@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -25,6 +26,7 @@ import com.io.unknow.navigation.*
 import com.io.unknow.parse.CameraParse
 import com.io.unknow.ui.fragment.DialogWithUserFragment
 import com.io.unknow.util.Setting
+import com.io.unknow.util.TAGS.USER_ID
 import com.io.unknow.viewmodel.activity.DialogViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -48,11 +50,12 @@ class DialogActivity : AppCompatActivity(), IBottomSheet, IRedactModeActivity,
     private lateinit var sendImages: ImageButton
     private var isRedact: Boolean = false
 
+    private var adapterGallery: AdapterGallery? = null
+
     var imagesSelected: MutableList<String> = mutableListOf()
 
     companion object{
         private const val CHAT = "chat"
-        private const val USER_ID = "userId"
 
         fun newInstance(context: Context,chat: Chat?, userId: String) = Intent(context,DialogActivity::class.java).apply {
             putExtra(CHAT, chat)
@@ -154,12 +157,29 @@ class DialogActivity : AppCompatActivity(), IBottomSheet, IRedactModeActivity,
         }
     }
 
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+
+         updateGallery()
+    }
+
     @SuppressLint("NewApi")
+    fun updateGallery(){
+        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            binding.bottomSheet.gallery.layoutManager = GridLayoutManager(this, 5)
+        } else {
+            binding.bottomSheet.gallery.layoutManager = GridLayoutManager(this, 3)
+        }
+
+        adapterGallery = AdapterGallery(context = this, list =  binding.viewModel!!.getCameraImages(this).reversed(),imagesSelected = binding.viewModel?.sparedFlow!!)
+        binding.bottomSheet.gallery.adapter = adapterGallery!!
+
+    }
+
     override fun loadBottomSheet() {
         if (!binding.viewModel!!.isPhotoLoad) {
-            binding.bottomSheet.gallery.layoutManager = GridLayoutManager(this, 3)
-
-            binding.bottomSheet.gallery.adapter = AdapterGallery(context = this, list =  binding.viewModel!!.getCameraImages(this).reversed(),imagesSelected = binding.viewModel?.sparedFlow!!)
+            updateGallery()
 
             CoroutineScope(Dispatchers.Main).launch{
                 binding.viewModel?.sparedFlow!!.collect{
@@ -188,6 +208,7 @@ class DialogActivity : AppCompatActivity(), IBottomSheet, IRedactModeActivity,
         bottomSheetBehavior.state = STATE_HIDDEN
         changeImageButtonOnSendText()
         imagesSelected.clear()
+        adapterGallery?.notifyDataSetChanged()
     }
 
     override fun isBottomShow(): Boolean = bottomSheetBehavior.state != STATE_HIDDEN

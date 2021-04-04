@@ -3,5 +3,5 @@ package com.io.unknow.navigation
 import java.io.Serializable
 
 interface IUpdateUser: Serializable {
-    fun update(height: String,weight: String)
+    fun update(height: String, weight: String, locale: String)
 }

@@ -1,64 +1,51 @@
 package com.io.unknow.broadcast
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.util.Log
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ValueEventListener
-import com.io.unknow.app.App
-import com.io.unknow.model.IMessage
-import com.io.unknow.model.MessageText
-import com.io.unknow.model.NotificationMessage
-import com.io.unknow.service.MessageService
-import javax.inject.Inject
+import android.os.Build
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import com.io.unknow.R
+import com.io.unknow.ui.activity.DialogActivity
+import com.io.unknow.util.TAGS.ID
+import com.io.unknow.util.TAGS.MESSAGE
+import com.io.unknow.util.TAGS.NOTIFICATION
+import com.io.unknow.util.TAGS.USER_ID
+import com.kirich1409.androidnotificationdsl.notification
 
-private const val NOTIFICATION = "notification"
 private val TAG = NotificationListener::class.simpleName
 class NotificationListener : BroadcastReceiver() {
 
-    @Inject
-    lateinit var mAuth: FirebaseAuth
-    @Inject
-    lateinit var base: DatabaseReference
-
-
     override fun onReceive(context: Context, intent: Intent) {
-        Log.i(TAG!!,"Lived Broad")
-        App.appComponent.inject(this)
+        val userId = intent.getStringExtra(USER_ID)!!
 
-        Log.i(TAG,"Lived Load")
+        val manager = NotificationManagerCompat.from(context)
+        val pendingIntent = PendingIntent.getActivity(context, 0, Intent(context,
+            DialogActivity::class.java).putExtra(USER_ID, userId),
+            0)
 
-        val list = mutableListOf<NotificationMessage>()
-        base.child(NOTIFICATION).child(mAuth.currentUser!!.uid).addListenerForSingleValueEvent(object : ValueEventListener{
-            override fun onDataChange(snapshot: DataSnapshot) {
-                for (userMessages in snapshot.children){
-                    val notificationMessage = NotificationMessage(userMessages.key!!)
-                    for (messageSnapshot in userMessages.children){
-                        val message = messageSnapshot.getValue(IMessage::class.java)!!
-                        notificationMessage.messageBigText += "${if (message is MessageText) message.text else "Фотография"} \n\n"
-                        notificationMessage.lastMessage = if (message is MessageText) message.text else "Фотография"
-                        //messageSnapshot.ref.removeValue()
-                    }
-                    notificationMessage.messageBigText = notificationMessage.messageBigText.trim()
-                    list.add(notificationMessage)
-                }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationChannel = NotificationChannel(
+                NOTIFICATION,
+                "My Notifications",
+                NotificationManager.IMPORTANCE_LOW
+            )
+            notificationChannel.setSound(null, null)
+            manager.createNotificationChannel(notificationChannel)
+        }
 
-                if (list.isNotEmpty()) {
-                    Log.i("Notification","Broad died ${list.size}")
-                    context.startService(MessageService.newInstance(context, list))
-                }
-                Log.i(TAG,"Broad died ${list.size}")
-            }
+        val builder = notification(context, NOTIFICATION, smallIcon = R.mipmap.icon) {
+            contentTitle(userId)
+            contentText(intent.getStringExtra(MESSAGE)!!)
+            contentIntent(pendingIntent)
+            priority(NotificationCompat.PRIORITY_DEFAULT)
+        }
 
-            override fun onCancelled(error: DatabaseError) {
-                Log.i(TAG,"Broad error")
-            }
-        })
+        manager.notify(intent.getIntExtra(ID,1111), builder)
 
-        Log.i(TAG,"Lived Finish")
     }
 }

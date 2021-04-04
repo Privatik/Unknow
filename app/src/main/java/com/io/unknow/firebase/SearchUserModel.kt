@@ -63,12 +63,20 @@ class SearchUserModel(private val liveData: SearchUserLiveData) {
                         if (checkMode.mode(isAgeStart, isAgeEnd, search.ageStart, search.ageEnd, DataParse.getYear(searchMen.user.age))) continue
                         if (checkMode.mode(searchMen.search.ageStart != null,searchMen.search.ageEnd != null,searchMen.search.ageStart,searchMen.search.ageEnd, DataParse.getYear(
                                 user.age))) continue
+
                         //Проверка на рост
                         if (checkMode.mode(isHeightStart,isHeightEnd,search.heightStart,search.heightEnd, searchMen.user.height)) continue
                         if (checkMode.mode(searchMen.search.heightStart != null,searchMen.search.heightEnd != null,search.heightStart,search.heightEnd, user.height)) continue
+
                         //Проверка на вес
                         if (checkMode.mode(isWeightStart,isWeightEnd,search.weightStart,search.weightEnd, searchMen.user.weight)) continue
                         if (checkMode.mode(searchMen.search.weightStart != null,searchMen.search.weightEnd != null,searchMen.search.weightStart,searchMen.search.weightEnd, user.weight)) continue
+
+                        //Проверка на местоположение
+                        if(isLocal) {
+                            if (searchMen.user.local == null) continue
+                            if (search.local!!.trim() != searchMen.user.local!!.trim()) continue
+                        }
 
                         isFound = true
                         userSnapshot.ref.child("uidUserFriend").setValue(user.id)

@@ -5,4 +5,5 @@ import androidx.lifecycle.ViewModel
 class ProfileUpdateViewModel: ViewModel() {
     var height: String = ""
     var weight: String = ""
+    var locale: String = ""
 }

@@ -161,10 +161,8 @@
             android:layout_height="wrap_content"
             android:text="@string/local"
             style="@style/MarginProfile"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@id/weight"
-            app:layout_constraintTop_toBottomOf="@+id/weight"
-            android:visibility="gone"/>
+            app:layout_constraintTop_toBottomOf="@+id/weight" />
 
         <ImageButton
             android:id="@+id/update"
@@ -183,7 +181,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="end"
-            android:text='@{viewmodel.user.height == null? "" : viewmodel.user.height + @string/cm}'
+            android:text='@{viewmodel.user.height == null? "" : viewmodel.user.height  + " " +  @string/cm}'
             android:layout_marginEnd="10dp"
             app:layout_constraintBottom_toBottomOf="@+id/height"
             app:layout_constraintEnd_toEndOf="parent"
@@ -195,11 +193,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="end"
-            android:text='@{viewmodel.user.weight == null? "" : viewmodel.user.weight + @string/kg}'
+            android:text='@{viewmodel.user.weight == null? "" : viewmodel.user.weight + " " + @string/kg}'
             android:layout_marginEnd="10dp"
             app:layout_constraintBottom_toBottomOf="@+id/weight"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/weight" />
+
+        <TextView
+            android:id="@+id/editLocal"
+            style="@style/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:gravity="end"
+            android:text='@{viewmodel.user.local == null? "" : viewmodel.user.local}'
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/local" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -228,7 +238,8 @@
             android:gravity="start|center"
             android:textAllCaps="false"
             android:layout_marginBottom="10dp"
-            android:text="@string/setting"/>
+            android:text="@string/setting"
+            tools:ignore="RtlSymmetry" />
 
         <Button
             android:id="@+id/exit"
